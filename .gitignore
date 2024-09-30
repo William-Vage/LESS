@@ -1,0 +1,36 @@
+# macOS system files
+.DS_Store
+
+# PyCharm project files
+.idea/
+
+# Python compiled files
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+ENV/
+env/
+
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+wheels/
+.sconsign.dblite
+pip-wheel-metadata/
+*.log
+
+# C extensions
+*.o
+*.obj
+*.dll
+*.a
+*.lib
