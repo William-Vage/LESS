@@ -212,7 +212,7 @@ Each script will accomplish the following tasks:
 * Store the error correction table for misclassified data when predicting topological relationships under `data/correct`
 
 ```shell
-python scripts/run_leonard.py
+python scripts/run_toy.py
 ```
 
 ```shell

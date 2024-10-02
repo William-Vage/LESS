@@ -34,3 +34,10 @@ pip-wheel-metadata/
 *.dll
 *.a
 *.lib
+
+# Data files
+data/*/*
+!data/*/.gitkeep
+!data/raw/datasets.zip
+leonard/data/*/*
+!leonard/data/*/.gitkeep

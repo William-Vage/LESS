@@ -39,8 +39,8 @@ def preprocess(vertex_src: str, edge_src: str, dest_dir: str):
 
 
 def preprocess_darpa_tc(edge_file, vertex_file):
-    vertex = vertex_file #os.path.join(config.project_root, 'data/raw/vertices.csv')
-    edge = edge_file #os.path.join(config.project_root, 'data/raw/edges.csv')
+    vertex = os.path.join(config.project_root, 'data/raw', vertex_file)
+    edge = os.path.join(config.project_root, 'data/raw', edge_file)
     dest = os.path.join(config.project_root, 'data/preprocess')
     preprocess(vertex, edge, dest)
 

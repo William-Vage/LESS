@@ -153,7 +153,7 @@ parser_neo4j.py
 * preprocess/ 预处理后数据
 * encode/ 编码后数据
 
-# 使用说明
+# LESS：使用说明
 
 1. 安装python依赖环境
 
@@ -200,7 +200,7 @@ export PYTHONPATH=$PYTHONPATH:$(pwd)
 * data/correct 预测拓扑关系时，对于错误分类数据的纠错表
 
 ```shell
-python scripts/run_leonard.py
+python scripts/run_toy.py
 ```
 
 ```shell
@@ -213,6 +213,23 @@ python scripts/run_darpaoptc.py
 Sure! Here's the translation of that section into English:
 
 ---
+
+# Leonard：使用说明
+
+1. 安装python3.11.5环境，然后安装下列依赖
+```shell
+pip install -r requirements.txt
+```
+
+2. 解压原始数据集
+
+linux
+```shell
+unzip data/raw/datasets.zip -d leonard/data/raw
+```
+windows需要将文件解压至data/raw/leonard文件夹下
+
+3. 
 
 # Running Experiments
 
@@ -229,7 +246,7 @@ Each script will accomplish the following tasks:
 * Store the error correction table for misclassified data when predicting topological relationships under `data/correct`
 
 ```shell
-python scripts/run_leonard.py
+python scripts/run_toy.py
 ```
 
 ```shell
@@ -239,3 +256,4 @@ python scripts/run_darpatc.py
 ```shell
 python scripts/run_darpaoptc.py
 ```
+

@@ -124,8 +124,8 @@ def encode(dataset='darpa_optc', edge_file='', vertex_file='', out_zip_file_path
 
 
 def decode(dataset='darpa_optc', topology_model_name='xgboost',
-           compressed_filepathname='data/compress_result/output.zip', query_out_path='data/query_result'):
-    compressed_filepathname = os.path.join(config.project_root, compressed_filepathname)
+           compressed_filename='output.zip'):
+    compressed_filepathname = os.path.join(config.project_root, 'data/compress_result', compressed_filename)
     unzip_dir = os.path.dirname(compressed_filepathname)
     program_start = time.time()
     # Step 0: Unzip the zip file to the specified path
@@ -199,8 +199,8 @@ def decode(dataset='darpa_optc', topology_model_name='xgboost',
     # 5. Composite output
     nodes_json = json.dumps(node_properties)
     edges_json = json.dumps(edge_properties)
-    nodes_json_dir = os.path.join(config.project_root, os.path.join(query_out_path, dataset + '_nodes_query.json'))
-    edges_json_dir = os.path.join(config.project_root, os.path.join(query_out_path, dataset + '_edges_query.json'))
+    nodes_json_dir = os.path.join(config.project_root, os.path.join('data/query_result', dataset + '_nodes_query.json'))
+    edges_json_dir = os.path.join(config.project_root, os.path.join('data/query_result', dataset + '_edges_query.json'))
     with open(nodes_json_dir, 'w') as f:
         json.dump(nodes_json, f)
     with open(edges_json_dir, 'w') as f:
@@ -219,4 +219,4 @@ if __name__ == '__main__':
     # print('***********************************************')
     # decode(dataset='leonard', compressed_filepathname='data/compress_result/leonard_demo.zip')
     # decode(dataset='darpa_optc', compressed_filepathname='data/compress_result/darpa_optc_demo.zip')
-    decode(dataset='darpa_tc', compressed_filepathname='data/compress_result/darpa_tc_demo.zip')
+    decode(dataset='darpa_tc', compressed_filename='compress_result/darpa_tc_demo.zip')
