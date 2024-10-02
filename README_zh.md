@@ -19,7 +19,7 @@
 
 本仓库包含了3个样例数据集及完整数据集的链接，所有样例数据集已存储至data/raw/下。
 
-1. Leonard数据集
+1. toy数据集
 
 data/raw/vertex200m.csv及data/raw/edge200m.csv
 
@@ -153,6 +153,9 @@ parser_neo4j.py
 * preprocess/ 预处理后数据
 * encode/ 编码后数据
 
+## Leonard论文方法复现
+/leonard/目录下包含了“The Case for Learned Provenance Graph Storage Systems”的复现代码
+
 # LESS：使用说明
 
 1. 安装python依赖环境
@@ -210,11 +213,11 @@ python scripts/run_darpatc.py
 ```shell
 python scripts/run_darpaoptc.py
 ```
-Sure! Here's the translation of that section into English:
-
 ---
 
 # Leonard：使用说明
+
+该部分复现了论文“The Case for Learned Provenance Graph Storage Systems”中toy数据集以及部分darpa tc数据集的实验
 
 1. 安装python3.11.5环境，然后安装下列依赖
 ```shell
@@ -229,31 +232,38 @@ unzip data/raw/datasets.zip -d leonard/data/raw
 ```
 windows需要将文件解压至data/raw/leonard文件夹下
 
-3. 
+3. 设置环境变量
 
-# Running Experiments
+在项目根目录下设置环境变量
 
-The command to run the experiments should be executed in the project root directory.
+windows
+```shell
+$env:PYTHONPATH = "$env:PYTHONPATH;$PWD"
+```
 
-Each script will accomplish the following tasks:
+linux
+```shell
+export PYTHONPATH=$PYTHONPATH:$(pwd)
+```
 
-* Generate compressed datasets under `data/compress_result`
-* Generate the queried nodes' topological relationships and the attribute values of the nodes and edges under `data/query_result`
-* Generate intermediate files for preprocessed datasets under `data/preprocess`
-* Generate encoded results of nodes and edges attributes under `data/encode`
-* Generate decoded results of attributes and topology under `data/decode`
-* Store the XGBoost model parameters under `data/model`
-* Store the error correction table for misclassified data when predicting topological relationships under `data/correct`
+4. 运行实验
+
+运行实验的命令需要在项目根目录下执行
+
+每一个脚本都会实现下列功能
+
+* leonard/data/compress下生成压缩后的数据集
+* leonard/data/query_result 生成被查询节点的拓扑关系，节点及边的属性值
+* leonard/data/preprocess 预处理数据集的中间文件
+* leonard/data/encode 编码结果
+* leonard/data/model lstm模型参数
+* leonard/data/correct 预测纠错表
 
 ```shell
-python scripts/run_toy.py
+python leonard/run_toy.py
 ```
 
 ```shell
-python scripts/run_darpatc.py
-```
-
-```shell
-python scripts/run_darpaoptc.py
+python leonard/run_darpatc.py
 ```
 
