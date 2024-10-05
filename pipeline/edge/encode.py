@@ -4,13 +4,14 @@ import config
 import os
 import csv
 
+
 def read_arrays_from_file(file_path):
     """
     读取edge连接关系文件，转成array
     :param file_path:
     :return:
     """
-    res = [[], []]
+    res = [[], [], []]
     i = 0
     # 创建一个空字典，用于存储已读取的行
     hash_dict = {}
@@ -19,6 +20,7 @@ def read_arrays_from_file(file_path):
         next(f)
         # 读取文件的每一行
         lines = f.readlines()
+        cnt = 0
         for line in tqdm(lines, total=len(lines)):
             # 去除首尾空白符
             line = line.strip()
@@ -28,20 +30,26 @@ def read_arrays_from_file(file_path):
                     if item not in hash_dict:
                         hash_dict[item] = i
                         i += 1
-                res[0].append(hash_dict[line_items[0]])
-                res[1].append(hash_dict[line_items[1]])
+                res[0].append(hash_dict[line_items[0]])  # parent node id
+                res[1].append(hash_dict[line_items[1]])  # child node id
+                res[2].append(cnt)  # p-c edge id
+                cnt += 1
+
     return res
 
 
-def insert_values_to_dict(keys, values):  # 将边的array转成dict
+def insert_values_to_dict(arrays):  # 转成dict
+    parent_node_id_list = arrays[0]
+    child_node_id_list = arrays[1]
+    edge_id_list = arrays[2]
     result_dict = {}
 
-    for key in keys:
+    for key in parent_node_id_list:
         if key not in result_dict:
             result_dict[key] = []
 
-    for key, value in zip(keys, values):
-        result_dict[key].append(value)
+    for i in range(len(parent_node_id_list)):
+        result_dict[parent_node_id_list[i]].append((child_node_id_list[i], edge_id_list[i]))
 
     return result_dict
 
@@ -60,34 +68,47 @@ def dict2npy(my_dict, file_path):
     tensor_data = []
 
     # 遍历字典的每个键值对
-    sorted_keys = sorted(my_dict.keys()) #让键递增有序
+    sorted_keys = sorted(my_dict.keys())  # 让键递增有序
     for i in range(len(sorted_keys)):
         key = sorted_keys[i]
-        tensor_data.extend(digit2digit_array(key)) #存储key
+        tensor_data.extend(digit2digit_array(key))  # 存储key
         tensor_data.append(10)  # 每个字段的分隔符
-        
+
         value = my_dict[key]
         # 对列表进行排序
         sorted_value = sorted(value)
         # 计算相邻元素之间的差分
-        value = [sorted_value[0]] + [sorted_value[i + 1] - sorted_value[i] for i in range(len(sorted_value) - 1)]  # 差分
+        value_child_node = [sorted_value[0][0]] + [sorted_value[i + 1][0] - sorted_value[i][0] for i in
+                                                   range(len(sorted_value) - 1)]  # 差分
+        value_edge = [sorted_value[i][1] for i in range(len(sorted_value))]  # 不差分，edge id 和 child node id 不具有单调一致性
         # 将对应值的每个元素添加到列表中
         value_len = len(value)
         i = 0
         while i < value_len:
             before = i
-            while i + 1 < value_len and value[i] == value[i + 1]:
+            while i + 1 < value_len and value_child_node[i] == value_child_node[i + 1]:
                 i += 1
             tensor_data.extend(digit2digit_array(i - before + 1))  # 相同差分的个数
             tensor_data.append(10)  # 每个字段的分隔符
-            tensor_data.extend(digit2digit_array(value[i]))  # 差分值
+            tensor_data.extend(digit2digit_array(value_child_node[i]))  # 差分值
+            # 在值之间添加‘10’
+            tensor_data.append(10)  # 每个字段的分隔符
+            i += 1
+        i = 0
+        while i < value_len:
+            before = i
+            while i + 1 < value_len and value_edge[i] == value_edge[i + 1]:
+                i += 1
+            tensor_data.extend(digit2digit_array(i - before + 1))  # 相同差分的个数
+            tensor_data.append(10)  # 每个字段的分隔符
+            tensor_data.extend(digit2digit_array(value_edge[i]))  # 差分值
             # 在值之间添加‘10’，除了最后一个值
             if i != len(value) - 1:
                 tensor_data.append(10)  # 每个字段的分隔符
             else:  # 添加‘11’分割每条记录
                 tensor_data.append(11)  # 每条记录的分隔符
             i += 1
-    tensor_data[-1] = 12 #全部记录的结尾
+    tensor_data[-1] = 12  # 全部记录的结尾
     # 将列表转换为 NumPy 数组
     tensor_data_array = np.array(tensor_data)
     # with open('node.txt', 'w') as f:
@@ -103,7 +124,7 @@ def edge_encode():
     # 调用函数读取文件中的数组
     arrays = read_arrays_from_file(input_file_path)
     # 将数组转换成dict
-    ret = insert_values_to_dict(arrays[0], arrays[1])
+    ret = insert_values_to_dict(arrays)
     # 将数组保存成npy文件，用于进一步的压缩
     dict2npy(ret, out_file_path)
     # # test: 将dict存成csv，以供解码对比

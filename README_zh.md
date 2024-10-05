@@ -158,7 +158,11 @@ parser_neo4j.py
 
 # LESS：使用说明
 
-1. 安装python依赖环境
+1. 安装python3.11.5依赖环境(以下为conda创建环境)
+```shell
+conda create -n less_env python=3.11.5
+conda activate less_env
+```
 
 首先安装python3.11.5环境，然后安装下列依赖
 ```shell
@@ -266,4 +270,34 @@ python leonard/run_toy.py
 ```shell
 python leonard/run_darpatc.py
 ```
+# 预期结果
 
+sample文件夹下存储了LESS及Leonard在数据集上的预期输出样例，下表统计了测试机器上的运行时间及存储开销统计结果。
+
+测试机器硬件配置如下
+
+* CPU：intel i5-1240P
+* 内存：16GB
+* 显卡：-
+
+## toy数据集
+
+| 方案      | CPU/GPU | 预处理时长 | 压缩时长   | 查询时长 | 总时长    | 存储空间   |  
+|:--------|:--------|:------|:-------|:-----|:-------|:-------|  
+| Leonard | CPU     | 4.0s  | 241.8s | 2.8s | 248.6s | 2.14MB | 
+| Leonard | GPU     |       |        |      |        |        |
+| LESS    | CPU     | 0.9s  | 11.6s  | 6.3s | 17.9s  | 0.63MB |
+
+## Darpa TC数据集
+
+| 方案      | CPU/GPU | 预处理时长 | 压缩时长   | 查询时长 | 总时长    | 存储空间   |  
+|:--------|:--------|:------|:-------|:-----|:-------|:-------|  
+| Leonard | CPU     | 15.7s | 355.8s | 1.3s | 372.8s | 3.14MB | 
+| Leonard | GPU     |       |        |      |        |        |
+| LESS    | CPU     | 3.2s  | 14.5s  | 2.3s | 16.8s  | 2.28MB |
+
+## Darpa OpTC数据集
+
+| 方案      | CPU/GPU | 预处理时长 | 压缩时长   | 查询时长 | 总时长    | 存储空间   |  
+|:--------|:--------|:------|:-------|:-----|:-------|:-------|
+| LESS    | CPU     |       |        |      |        |        |

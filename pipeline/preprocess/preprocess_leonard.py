@@ -38,7 +38,7 @@ def preprocess(vertex_src: str, edge_src: str, dest_dir: str):
     preprocess_edge(edge_src, dest_dir)
 
 
-def preprocess_leonard():
+def preprocess_toy():
     vertex = os.path.join(config.project_root, 'data/raw/vertex200m.csv')
     edge = os.path.join(config.project_root, 'data/raw/edge200m.csv')
     dest = os.path.join(config.project_root, 'data/preprocess')
@@ -56,4 +56,4 @@ def preprocess_exp():
 
 
 if __name__ == '__main__':
-    preprocess_leonard()
+    preprocess_toy()

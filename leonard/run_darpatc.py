@@ -2,4 +2,4 @@ from leonard.run import leonard_run
 
 
 if __name__ == '__main__':
-    leonard_run('darpatc')
+    leonard_run('darpa_tc')

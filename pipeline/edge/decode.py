@@ -39,13 +39,13 @@ def npy2dict(file_path):
     # 从.npy文件加载数据
     tensor_data_array = np.load(file_path)
     tensor_data = tensor_data_array.tolist()
-    
+
     # 创建一个空字典用于存储数据
     my_dict = {}
-    cur_edge_id = 0
+    # cur_edge_id = 0
     # 将数据转换回原始字典形式
-    value = []  #更替存储差分个数、差分值的数组
-    tmp_num = 0 #把0-9的数字恢复成的完整的计数值
+    value = []  # 更替存储差分个数、差分值的数组
+    tmp_num = 0  # 把0-9的数字恢复成的完整的计数值
     # 从编码恢复更替存储差分个数、差分值的数组
     for _, num in enumerate(tensor_data):
         if num == 11 or num == 12:  # 遇到记录分隔符或全部记录停止符
@@ -59,18 +59,22 @@ def npy2dict(file_path):
             tmp_num = 0
         else:  # 遇到0-9的数字
             tmp_num = tmp_num * 10 + num
-    #恢复所有差分值（去除差分个数这一项）、反差分
+    # 恢复所有差分值（去除差分个数这一项）、反差分
     for key, value in my_dict.items():
         tmp_value = []
-        #去除差分个数这一项
+        # 去除差分个数这一项
         for i in range(int(len(value) / 2)):
-            tmp_value += [value[i*2+1]] * value[i*2]
-        #恢复原始值（反差分）
-        for i in range(len(tmp_value)-1):
-            tmp_value[i+1] += tmp_value[i]
-        my_dict[key] = [cur_edge_id] + tmp_value #每一个字典项的第0个表示整个字典前面有多少条边了，从而方便获取此字典项内的边的id编号（每个字典项的第0条边的id即为此值）。
-        cur_edge_id += len(tmp_value)
-
+            tmp_value += [value[i * 2 + 1]] * value[i * 2]
+        # 恢复原始值（反差分）
+        for i in range(len(tmp_value) // 2 - 1):
+            tmp_value[i + 1] += tmp_value[i]
+        my_dict[key] = tmp_value  # 每一个字典项的第0个表示整个字典前面有多少条边了，从而方便获取此字典项内的边的id编号（每个字典项的第0条边的id即为此值）。
+        # cur_edge_id += len(tmp_value)
+    for key, value_list in my_dict.items():
+        # 确定列表的长度（必为偶数）
+        mid = len(value_list) // 2
+        # 将前半部分和后半部分配对成二元组
+        my_dict[key] = [(value_list[i], value_list[i + mid]) for i in range(mid)]
     return my_dict
 
 
@@ -88,12 +92,17 @@ def test_dict_to_csv(my_dict, out_file):
 
 
 def successors_to_predecessors(successors_dict):
-    predecessors_dict = {node: [] for node in successors_dict}
-    for node, succ_list in successors_dict.items():
-        for succ in succ_list[1:]:
-            if succ not in predecessors_dict:
-                predecessors_dict[succ] = []  # 如果后继节点不在字典中，创建一个空列表
-            predecessors_dict[succ].append(node)
+    # 新字典
+    predecessors_dict = {}
+    # 遍历原始字典的每个键值对
+    for orig_key, tuple_list in successors_dict.items():
+        for first_elem, second_elem in tuple_list:
+            # 如果新字典中不存在当前first_elem作为键的记录，创建一个空列表
+            if first_elem not in predecessors_dict:
+                predecessors_dict[first_elem] = []
+
+            # 将原始键和二元组中的第二个元素组成新二元组，添加到新字典中
+            predecessors_dict[first_elem].append((orig_key, second_elem))
     return predecessors_dict
 
 

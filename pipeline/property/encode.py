@@ -319,7 +319,7 @@ def property_encode(encode_vertex: bool, method: str, window_size: int, suffix: 
         out_path = os.path.join(out_dir, out_file)
         if os.path.exists(out_path):
             os.remove(out_path)
-        file.readline()
+        # file.readline()
         while flag:
             edge_res, flag = compress_graph(file, n_limit, method, window_size)
             save_encode_result(edge_res, f'edge_property{suffix}.txt', out_dir)
@@ -331,7 +331,7 @@ def property_encode(encode_vertex: bool, method: str, window_size: int, suffix: 
         if os.path.exists(out_path):
             os.remove(out_path)
         with open(node_file, 'r') as file:
-            file.readline()
+            # file.readline()
             while flag:
                 node_res, flag = compress_graph(file, n_limit, method, window_size)
                 save_encode_result(node_res, out_file, out_dir)

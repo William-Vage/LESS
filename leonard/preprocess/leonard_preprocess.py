@@ -72,6 +72,7 @@ def extract_non_null_columns_list(df: pd.DataFrame):
     :param df: Pandas DataFrame
     :return: 每行列名字符串列表
     """
+
     def extract_non_null_columns(row):
         non_null_columns = [column for column, value in row.items() if pd.notna(value)]
         return ','.join(non_null_columns)
@@ -108,7 +109,6 @@ class LeonardEncoder(BaseEncoder):
             'vertex_type': vertex_type
         })
         self.vertex = df
-        
 
     def read_edge(self, df: pd.DataFrame, source_id: str, destination_id: str, edge_id: str, edge_type: str, **kwargs):
         self.m.update({
@@ -182,18 +182,34 @@ class LeonardEncoder(BaseEncoder):
             else:
                 result_dict[key] = value_set
         # 对集合进行0-N-1编码
+        # for key, value_set in result_dict.items():
+        #     for i, value in enumerate(value_set):
+        #         print({key:{value:i}})
         self.re_values = {key: {value: i for i, value in enumerate(value_set)} for key, value_set in
                           result_dict.items()}
+        tmp_dict = {}
+        for key, _ in self.re_values['subject_id'].items():
+            tmp_dict[key] = self.re_values['id'][key]
+        self.re_values['subject_id'] = tmp_dict.copy()
+
+        tmp_dict = {}
+        for key, _ in self.re_values['predicate_id'].items():
+            tmp_dict[key] = self.re_values['id'][key]
+        self.re_values['predicate_id'] = tmp_dict.copy()
         # 2.求4列最小值的数组
         self.min_values = calculate_min_values(self.edge)
         # 3.更新hash及pid
         rows_vertex = self.vertex['pid'].notna()
-        self.parm_edges[0].extend([self.re_values['id'][i] for i in self.vertex.loc[rows_vertex, 'id']])
+
+        # self.parm_edges[0].extend([self.re_values['id'][i] for i in self.vertex.loc[rows_vertex, 'id']])
+        self.parm_edges[0].extend([self.re_values['id'][i] for i in self.vertex['id']])
         self.parm_edges[1].extend([self.re_values['pid'][i] for i in self.vertex.loc[rows_vertex, 'pid']])
         # 4.更新edge的source_id与destination_id，转换为id数值
         self.parm_edges[2] = [self.re_values[self.m['source_id']][i] for i in self.edge[self.m['source_id']]]
         self.parm_edges[3] = [self.re_values[self.m['destination_id']][i] for i in self.edge[self.m['destination_id']]]
         # 5.对每个hash值做编码
+        # hash_vertex = [self.update_char_dict_and_translate(f"verteid:{self.re_values['id'][i]}")
+        #                for i in self.vertex['id']]
         hash_vertex = [self.update_char_dict_and_translate(f"verteid:{self.re_values['id'][i]}")
                        for i in self.vertex['id']]
         hash_edge = [self.update_char_dict_and_translate(f"eventid:{i}")
@@ -275,7 +291,7 @@ class LeonardEncoder(BaseEncoder):
 
 
 # if __name__ == '__main__':
-def leonard_preprocess_func(leonard_edge_file='', leonard_vertex_file='', dataset='darpa_tc'):
+def leonard_preprocess_func(leonard_edge_file='', leonard_vertex_file='', dataset='toy'):
     t_start = time.time()
     # 测试leonard样例数据
     encoder = LeonardEncoder()
@@ -286,8 +302,8 @@ def leonard_preprocess_func(leonard_edge_file='', leonard_vertex_file='', datase
         # 读取点和边
         encoder.read_vertex(vertex, vertex_id='id', vertex_type='type')
         encoder.read_edge(edge, source_id='subject_id', destination_id='predicate_id', edge_id='id',
-                      edge_type='type')
-    elif dataset == 'leonard':
+                          edge_type='type')
+    elif dataset == 'toy':
         vertex = pd.read_csv(leonard_vertex_file, low_memory=False)
         edge = pd.read_csv(leonard_edge_file, low_memory=False)
         vertex = vertex.rename(columns={
@@ -301,7 +317,7 @@ def leonard_preprocess_func(leonard_edge_file='', leonard_vertex_file='', datase
         # 读取点和边
         encoder.read_vertex(vertex, vertex_id='id', vertex_type='type')
         encoder.read_edge(edge, source_id='predicate_id', destination_id='subject_id', edge_id='id',
-                      edge_type='type')
+                          edge_type='type')
 
     # 编码
     encoder.encode()

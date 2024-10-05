@@ -1,6 +1,6 @@
 import json
-
-import Levenshtein
+from io import StringIO
+import pandas as pd
 import config
 import struct
 import os
@@ -69,33 +69,59 @@ def decode_line(lines: list[bytes], loc) -> str:
     return res
 
 
-def property_decode(dtype: str, ids: list[int]):
-    decode_vertex_properties, decode_edge_properties = {}, {}
+def transform_json(headers: list[str], csv_str: str, dtype: str, extra_info: list):
+    df = pd.read_csv(StringIO(csv_str), names=headers)
+    records = df.to_dict(orient='records')
+    clean_records = []
+    for i, record in enumerate(records):
+        value = {}
+        for k, v in record.items():
+            if pd.notnull(v):
+                value[k] = v
+        if dtype == 'edge':
+            value['parentVertexHash'] = str(extra_info[i][0])
+            value['childVertexHash'] = str(extra_info[i][1])
+        elif dtype == 'vertex':
+            value['hash'] = str(extra_info[i])
+        clean_records.append(value)
+    json_data = json.dumps(clean_records, ensure_ascii=False, indent=4)
+    return json_data
+
+
+def property_decode(dtype: str, ids: list):
+    decode_vertex_properties, decode_edge_properties = '', ''
+    extra_info = []
     # 读取编码结果
     if dtype == 'edge':
         edge_encode_file = os.path.join(config.project_root, 'data/encode/edge_property.txt')
         with open(edge_encode_file, 'rb') as f:
             encoded_edge_properties = f.read().split(bytes([0xff]))
         # 解码
-        for i in range(len(ids)):
-            if len(encoded_edge_properties[i]) > 0:
-                decode_edge_properties[ids[i]] = decode_line(encoded_edge_properties, ids[i]) + '\n'
+        headers = decode_line(encoded_edge_properties, 0).split(',')
+        for i in ids:
+            for k, v in i.items():
+                if len(encoded_edge_properties[k]) > 0:
+                    decode_edge_properties += decode_line(encoded_edge_properties, k + 1) + '\n'
+                    extra_info.append(v)
         # 输出解码结果
-        edge_decode_file = os.path.join(config.project_root, 'data/decode/edge_property.csv')
+        edge_decode_file = os.path.join(config.project_root, 'data/decode/edge_property.json')
+        decode_json = transform_json(headers, decode_edge_properties, 'edge', extra_info)
         with open(edge_decode_file, 'w') as f:
-            f.writelines(json.dumps(decode_edge_properties))
-        return decode_edge_properties
+            f.writelines(decode_json)
+        return decode_json
     elif dtype == 'vertex':
         vertex_encode_file = os.path.join(config.project_root, 'data/encode/vertex_property.txt')
         with open(vertex_encode_file, 'rb') as f:
             encoded_vertex_properties = f.read().split(bytes([0xff]))
+        headers = decode_line(encoded_vertex_properties, 0).split(',')
         for i in range(len(ids)):
             if len(encoded_vertex_properties[i]) > 0:
-                decode_vertex_properties[ids[i]] = decode_line(encoded_vertex_properties, ids[i]) + '\n'
-        vertex_decode_file = os.path.join(config.project_root, 'data/decode/vertex_property.csv')
+                decode_vertex_properties += decode_line(encoded_vertex_properties, ids[i] + 1) + '\n'
+        vertex_decode_file = os.path.join(config.project_root, 'data/decode/vertex_property.json')
+        decode_json = transform_json(headers, decode_vertex_properties, 'vertex', ids)
         with open(vertex_decode_file, 'w') as f:
-            f.writelines(json.dumps(decode_vertex_properties))
-        return decode_vertex_properties
+            f.writelines(decode_json)
+        return decode_json
 
 
 if __name__ == '__main__':

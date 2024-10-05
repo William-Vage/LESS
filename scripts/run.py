@@ -1,4 +1,4 @@
-from pipeline.preprocess.preprocess_leonard import preprocess_leonard
+from pipeline.preprocess.preprocess_leonard import preprocess_toy
 from pipeline.preprocess.preprocess_darpa_tc import preprocess_darpa_tc
 from pipeline.preprocess.preprocess_darpa_optc import preprocess_darpa_optc
 from pipeline.edge.encode import edge_encode
@@ -6,7 +6,7 @@ from pipeline.edge.decode import edge_decode
 from pipeline.edge.train_deep import train_deep_model
 from pipeline.edge.train_ml import train_ml_model
 from pipeline.edge.correct import correct_edge, re_construct_edge
-from pipeline.edge.query import query_bfs, query_bfs2
+from pipeline.edge.query import query_bfs
 from pipeline.property.encode import property_encode
 from pipeline.property.decode import property_decode
 from pipeline.compress.compress import compress
@@ -45,7 +45,7 @@ def create_dir():
 def clear_dir():
     dir_root = os.path.join(config.project_root, 'data')
     dir_list = os.listdir(dir_root)
-    skip_dir = ['raw', 'result']
+    skip_dir = ['raw', 'compress_result', 'query_result']
     for i in dir_list:
         folder_path = os.path.join(dir_root, i)
         if i in skip_dir:
@@ -77,8 +77,8 @@ def encode(dataset='darpa_optc', edge_file='', vertex_file='', out_zip_file_path
     program_start = time.time()
     # 1. Preprocess data
     t_start = time.time()
-    if dataset == 'leonard':
-        preprocess_leonard()
+    if dataset == 'toy':
+        preprocess_toy()
     elif dataset == 'darpa_tc':
         preprocess_darpa_tc(edge_file, vertex_file)
     elif dataset == 'darpa_optc':
@@ -87,7 +87,7 @@ def encode(dataset='darpa_optc', edge_file='', vertex_file='', out_zip_file_path
     print(f'Preprocess cost: {t_end - t_start}')
     # 2. Encode edge
     t_start = time.time()
-    edge_encode()
+    edge_encode() #边id顺序
     t_end = time.time()
     print(f'Encode edge cost: {t_end - t_start}')
     # 3. Train edge prediction model
@@ -102,7 +102,7 @@ def encode(dataset='darpa_optc', edge_file='', vertex_file='', out_zip_file_path
     print(f'Calibration table cost: {t_end - t_start}')
     # 5. Train property prediction model
     t_start = time.time()
-    if dataset == 'leonard' or dataset == 'darpa_tc':
+    if dataset == 'toy' or dataset == 'darpa_tc':
         property_encode(encode_vertex=True, method='word_bag', window_size=4)
     elif dataset == 'darpa_optc':
         property_encode(encode_vertex=False, method='word_bag', window_size=6)
@@ -110,7 +110,7 @@ def encode(dataset='darpa_optc', edge_file='', vertex_file='', out_zip_file_path
     print(f'Encode property cost: {t_end - t_start}')
     # 6. Pack into zip
     t_start = time.time()
-    if dataset == 'leonard' or dataset == 'darpa_tc':
+    if dataset == 'toy' or dataset == 'darpa_tc':
         compress(topology_model_name, encode_vertex=True, out_zip_file_path=out_zip_file_path,
                  out_file_name=out_zip_file_name)
     elif dataset == 'darpa_optc':
@@ -142,20 +142,20 @@ def decode(dataset='darpa_optc', topology_model_name='xgboost',
     try:
         # Move files to target directory
         found_file_path = os.path.join(unzip_dir, config.model_name_appendex[topology_model_name])
-        destination = os.path.join('data/model', config.model_name_appendex[topology_model_name])
+        destination = os.path.join(config.project_root, 'data/model', config.model_name_appendex[topology_model_name])
         shutil.move(found_file_path, destination)
 
         found_file_path = os.path.join(unzip_dir, 'calibration_table.txt')
-        destination = 'data/correct/calibration_table.txt'
+        destination = os.path.join(config.project_root, 'data/correct/calibration_table.txt')
         shutil.move(found_file_path, destination)
 
         found_file_path = os.path.join(unzip_dir, 'edge_property.txt')
-        destination = os.path.join('data/encode/edge_property.txt')
+        destination = os.path.join(config.project_root, 'data/encode/edge_property.txt')
         shutil.move(found_file_path, destination)
 
-        if dataset == 'darpa_tc' or dataset == 'leonard':
+        if dataset == 'darpa_tc' or dataset == 'toy':
             found_file_path = os.path.join(unzip_dir, 'vertex_property.txt')
-            destination = os.path.join('data/encode/vertex_property.txt')
+            destination = os.path.join(config.project_root, 'data/encode/vertex_property.txt')
             shutil.move(found_file_path, destination)
 
         print(f"unzip {compressed_filepathname} successfully.")
@@ -171,40 +171,39 @@ def decode(dataset='darpa_optc', topology_model_name='xgboost',
     correct_edge_dict, correct_edge_dict2 = edge_decode()
     t_end = time.time()
     print(f'Regenerate origin parent-children edge dict cost: {t_end - t_start}')
-    # 3. Query BFS
+    # 3. Query BFS(search children)
     t_start = time.time()
-    start_node_ids = list(correct_edge_dict.keys())[:100]
-    nodes_ids, edges_ids = query_bfs(correct_edge_dict, start_node_ids, 4096)
-    print('node id + edge id = ', len(nodes_ids) + len(edges_ids))
+    start_node_ids = [0] #list(correct_edge_dict.keys())[:100]
+    nodes_ids, edges_dict_list = query_bfs(correct_edge_dict, start_node_ids, 20)
+    print('node id + edge id = ', len(nodes_ids) + len(edges_dict_list))
     print(f'query cost: {t_end - t_start}')
-    t_start = time.time()
-    start_node_ids2 = list(correct_edge_dict2.keys())[-100:]
-    nodes_ids, edges_ids = query_bfs2(correct_edge_dict, correct_edge_dict2, start_node_ids2, 4096)
-    t_end = time.time()
-    print(f'query2 cost: {t_end - t_start}')
+    # # Query BFS2(search parents)
+    # t_start = time.time()
+    # start_node_ids2 = [0] list(correct_edge_dict2.keys())[-100:]
+    # nodes_ids, edges_dict_list = query_bfs(correct_edge_dict2, start_node_ids2, 4096)
+    # nodes_ids, edges_dict_list = query_bfs2(correct_edge_dict, correct_edge_dict2, start_node_ids2, 4096)
+    # t_end = time.time()
+    # print(f'query2 cost: {t_end - t_start}')
     # print('node ids:', nodes_ids)
-    # print('edge ids:', edges_ids)
-    print('node id + edge id = ', len(nodes_ids) + len(edges_ids))
+    # print('edge ids:', edges_dict_list)
+    print('node id + edge id = ', len(nodes_ids) + len(edges_dict_list))
     # 4. Property decode
     t_start = time.time()
-    nodes_ids_sorted = sorted(nodes_ids)
-    edges_ids_sorted = sorted(edges_ids)
-    node_properties = []
-    edge_properties = []
-    edge_properties = property_decode('edge', edges_ids_sorted)
-    if dataset == 'darpa_tc' or dataset == 'leonard':
-        node_properties = property_decode('vertex', nodes_ids_sorted)
+    # nodes_ids_sorted = sorted(nodes_ids)
+    # edges_ids_sorted = sorted(edges_dict_list)
+    nodes_json = json.dumps([])
+    edges_json = property_decode('edge', edges_dict_list)
+    if dataset == 'darpa_tc' or dataset == 'toy':
+        nodes_json = property_decode('vertex', nodes_ids)
     t_end = time.time()
     print(f'property decode cost: {t_end - t_start}')
     # 5. Composite output
-    nodes_json = json.dumps(node_properties)
-    edges_json = json.dumps(edge_properties)
     nodes_json_dir = os.path.join(config.project_root, os.path.join('data/query_result', dataset + '_nodes_query.json'))
     edges_json_dir = os.path.join(config.project_root, os.path.join('data/query_result', dataset + '_edges_query.json'))
     with open(nodes_json_dir, 'w') as f:
-        json.dump(nodes_json, f)
+        f.write(nodes_json)
     with open(edges_json_dir, 'w') as f:
-        json.dump(edges_json, f)
+        f.write(edges_json)
     # 6. Output total time
     program_end = time.time()
     print(f'Total cost: {program_end - program_start}')

@@ -5,12 +5,13 @@ import zipfile
 import os
 import leonard.config as config
 import shutil
+from query_withedge_vertex_removeedge_darpa_batch import leonard_query_run
 
 def create_dir():
     d = os.path.join(config.project_root, 'data')
     if not os.path.exists(d):
         os.makedirs(d)
-    dir_list = ['raw', 'preprocess', 'model', 'encode', 'correct', 'compress']
+    dir_list = ['raw', 'preprocess', 'model', 'encode', 'correct', 'compress', 'query_result']
     for dir_item in dir_list:
         dir_item = os.path.join(d, dir_item)
         if not os.path.exists(dir_item):
@@ -20,7 +21,7 @@ def create_dir():
 def clear_dir():
     dir_root = os.path.join(config.project_root, 'data')
     dir_list = os.listdir(dir_root)
-    skip_dir = ['raw', 'compress', 'final_res']
+    skip_dir = ['raw', 'compress', 'query_result']
     for i in dir_list:
         folder_path = os.path.join(dir_root, i)
         if i in skip_dir:
@@ -43,11 +44,11 @@ def clear_dir():
             print(f"删除 {folder_path} 下的内容时发生错误：{e}")
 
 
-def leonard_run(dataset='leonard'):
-    if dataset == 'darpatc':
+def leonard_run(dataset='toy'):
+    if dataset == 'darpa_tc':
         edges_list = ['ta1-trace-3-e5-official-1.bin.1_concatenated_edges_top_300000.csv']
         vertices_list = ['ta1-trace-3-e5-official-1.bin.1_concatenated_vertices_top_300000.csv']
-    elif dataset == 'leonard':
+    elif dataset == 'toy':
         edges_list = ['edge200m.csv']
         vertices_list = ['vertex200m.csv']
 
@@ -56,8 +57,9 @@ def leonard_run(dataset='leonard'):
     leonard_preprocess_func(leonard_edge_file=edge_file, leonard_vertex_file=vertex_file, dataset=dataset)
     leonard_train_func()
     leonard_correct_func()
-    out_zip_file = os.path.join(config.project_root, 'data/compress/' + dataset + '_output.zip')
+    out_zip_file = os.path.join(config.project_root, 'data/compress/leonard_' + dataset + '_output.zip')
     leonard_zip_output_files(out_zip_file)
+    leonard_query_run(dataset)
 
 
 def leonard_zip_output_files(out_zip_file):
