@@ -39,7 +39,7 @@ def create_unique_mapping_dict(df: pd.DataFrame, exclude_col=None):
     return result_dict
 
 
-def calculate_min_values(df: pd.DataFrame):
+def calculate_min_values(df: pd.DataFrame, dataset):
     """
     计算指定列的最小值并存储在一维列表中。
     :param df: pandas DataFrame，包含待处理的数据。
@@ -55,6 +55,8 @@ def calculate_min_values(df: pd.DataFrame):
     min_values_list = [sys.maxsize] * 4  # 初始化为sys.maxsize
     # 指定列名
     columns_to_calculate = ['startTimestampNanos', 'event id', 'time', '-']
+    if dataset == 'darpa_tc':
+        columns_to_calculate = ['timestampNanos', 'sequence']#, 'size', '-']
     for column in columns_to_calculate:
         if column in df.columns:
             min_value = df[column].min()
@@ -150,7 +152,7 @@ class LeonardEncoder(BaseEncoder):
         res.append(0)
         return res
 
-    def encode_other_parameters(self, df: pd.DataFrame):
+    def encode_other_parameters(self, df: pd.DataFrame, dataset):
         """
         编码其余参数
         :param df: 输入参数
@@ -160,8 +162,11 @@ class LeonardEncoder(BaseEncoder):
         for col in df:
             if col in ["id", "predicate_id", "subject_id"]:
                 continue
-            elif col == 'startTimestampNanos':
-                value = str(df[col] - self.min_values[0])
+            # elif (dataset == 'leonard' and col == 'startTimestampNanos') or (dataset == 'darpa_tc' and col == 'timestampNanos'):
+            #     value = str(df[col] - self.min_values[0])
+            #     value = [str(x) for x in list(df[col] - self.min_values[0])]
+            # elif (dataset == 'leonard' and col == 'event id') or (dataset == 'darpa_tc' and col == 'sequence'):
+            #     value = [str(x) for x in list(df[col] - self.min_values[1])]
             elif col == 'time':
                 value = [str(i).replace('.', ',') for i in df[col]]
             else:
@@ -170,13 +175,14 @@ class LeonardEncoder(BaseEncoder):
             res.append(value)
         return res
 
-    def encode(self):
+
+    def encode(self, dataset):
         # 1.统计所有不重复的串，并从0-N进行编码
         unique_values_vertex = create_unique_mapping_dict(self.vertex)
         unique_values_edge = create_unique_mapping_dict(self.edge, exclude_col=['id'])
         result_dict = unique_values_vertex.copy()
-        result_dict['id'] = result_dict['id'].union(unique_values_edge['subject_id'])
-        result_dict['id'] = result_dict['id'].union(unique_values_edge['predicate_id'])
+        # result_dict['id'] = result_dict['id'].union(unique_values_edge['subject_id'])
+        # result_dict['id'] = result_dict['id'].union(unique_values_edge['predicate_id'])
         # 合并集合
         for key, value_set in unique_values_edge.items():
             if key in result_dict:
@@ -190,21 +196,31 @@ class LeonardEncoder(BaseEncoder):
         self.re_values = {key: {value: i for i, value in enumerate(value_set)} for key, value_set in
                           result_dict.items()}
         tmp_dict = {}
+        cnt = len(self.re_values['id'])
         for key, _ in self.re_values['subject_id'].items():
-            tmp_dict[key] = self.re_values['id'][key]
+            if(self.re_values['id'].get(key)):
+                tmp_dict[key] = self.re_values['id'][key]
+            else:
+                tmp_dict[key] = cnt
+                cnt += 1
         self.re_values['subject_id'] = tmp_dict.copy()
 
         tmp_dict = {}
         for key, _ in self.re_values['predicate_id'].items():
-            tmp_dict[key] = self.re_values['id'][key]
+            if(self.re_values['id'].get(key)):
+                tmp_dict[key] = self.re_values['id'][key]
+            else:
+                tmp_dict[key] = cnt
+                cnt += 1
         self.re_values['predicate_id'] = tmp_dict.copy()
         # 2.求4列最小值的数组
-        self.min_values = calculate_min_values(self.edge)
+        self.min_values = calculate_min_values(self.edge, dataset)
         # 3.更新hash及pid
         rows_vertex = self.vertex['pid'].notna()
 
         # self.parm_edges[0].extend([self.re_values['id'][i] for i in self.vertex.loc[rows_vertex, 'id']])
-        self.parm_edges[0].extend([self.re_values['id'][i] for i in self.vertex['id']])
+        # self.parm_edges[0].extend([self.re_values['id'][i] for i in self.vertex['id']])
+        self.parm_edges[0].extend([self.re_values['id'][i] for i in self.re_values['id']])
         self.parm_edges[1].extend([self.re_values['pid'][i] for i in self.vertex.loc[rows_vertex, 'pid']])
         # 4.更新edge的source_id与destination_id，转换为id数值
         self.parm_edges[2] = [self.re_values[self.m['source_id']][i] for i in self.edge[self.m['source_id']]]
@@ -225,8 +241,8 @@ class LeonardEncoder(BaseEncoder):
                          for i in s_vertex]
         schema_edge = [self.update_char_dict_and_translate(str(self.key_template_dict[i]), split=False) for i in s_edge]
         # 7.编码其余属性
-        other_prop_vertex = self.encode_other_parameters(self.vertex)
-        other_prop_edge = self.encode_other_parameters(self.edge)
+        other_prop_vertex = self.encode_other_parameters(self.vertex, dataset)
+        other_prop_edge = self.encode_other_parameters(self.edge, dataset)
         # 8.整合编码结果
         stop_vertex = [[1] for _ in range(len(self.vertex))]
         stop_edge = [[1] for _ in range(len(self.edge))]
@@ -322,7 +338,7 @@ def leonard_preprocess_func(leonard_edge_file='', leonard_vertex_file='', datase
                           edge_type='type')
 
     # 编码
-    encoder.encode()
+    encoder.encode(dataset)
     # 保存模型
     encoder.save_model(save_path)
     # 保存编码后的数据

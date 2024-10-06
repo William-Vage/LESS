@@ -19,8 +19,11 @@ patience = 1000
 seq_len = 10
 epochs = 10
 lr = 0.001
-if torch.cuda.is_available():
-    device = torch.device('cuda:0')
+if config.use_gpu:
+    if torch.cuda.is_available():
+        device = torch.device('cuda:0')
+    else:
+        device = torch.device('cpu')
 else:
     device = torch.device('cpu')
 # 训练数据路径

@@ -9,6 +9,10 @@ def preprocess_vertex(src_file: str, dest_dir: str):
     :return: None
     """
     df = pd.read_csv(src_file, low_memory=False)
+
+    # 保留第一次出现的行
+    df = df.drop_duplicates(subset='id', keep='first')
+
     node_hash = df['id']
     del df['id']
     node_hash.to_csv(os.path.join(dest_dir, 'node_id.csv'), index=False)
@@ -24,7 +28,8 @@ def preprocess_edge(src_file: str, dest_dir: str):
     edge_hash = df[['subject_id', 'predicate_id']]
     del_cols = ['id', 'subject_id', 'predicate_id']
     for i in del_cols:
-        del df[i]
+        if i in df.columns:
+            del df[i]
     edge_hash.to_csv(os.path.join(dest_dir, 'edge_id.csv'), index=False)
     df.to_csv(os.path.join(dest_dir, 'edge_property.csv'), index=False)
 

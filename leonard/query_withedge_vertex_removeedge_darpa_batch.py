@@ -39,8 +39,6 @@ args.dataset_flag = 1
 args.edge_file = os.path.join(extract_path, 'edges.txt')  # "../../data/encode/edges.txt"
 args.gpu = 0
 device = torch.device('cpu')
-print(torch.cuda.is_available())
-
 
 # os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 
@@ -228,7 +226,7 @@ def translate_str(data, key=''):
     return process
 
 
-def translate(data, key='', flag=0):
+def translate(data, dataset, key='', flag=0):
     data = data[0:len(data) - 1]
     if data[0] == 3:
         flag = 1
@@ -249,25 +247,23 @@ def translate(data, key='', flag=0):
         key_list['hash'] = translate_str(counter_tmp)
     begin = 2
     for index in range(len(key_pattern)):
-        key = key_pattern[index]
-        if key != 'hash':
-            if key == 'parentVertexHash':
-                key_list[key] = str(o1[int(translate_str(counter_tmp))])
+        key=key_pattern[index]
+        if key!='hash':
+            if key=='parentVertexHash':
+                key_list[key]=str(o1[int(translate_str(counter_tmp))])
                 continue
-            elif key == 'childVertexHash':
-                key_list[key] = str(o2[int(translate_str(counter_tmp))])
+            elif key=='childVertexHash':
+                key_list[key]=str(o2[int(translate_str(counter_tmp))])
                 continue
-            elif key == 'timestampNanos':
-                key_list[key] = str(int(translate_str(data[begin], key)) + mins[0])
-            elif key == 'startTimestampNanos':
-                key_list[key] = str(int(translate_str(data[begin], key)) + mins[1])
-            elif key == 'sequence':
-                key_list[key] = str(int(re_values[key][int(translate_str(data[begin], key))]) + mins[2])
-            elif key == 'time':
-                key_list[key] = str(translate_str(data[begin], key).replace(",", "."))
+            elif (dataset == 'leonard' and key == 'startTimestampNanos') or (dataset == 'darpa_tc' and key == 'timestampNanos'):
+                key_list[key]=str(int(translate_str(data[begin],key))+mins[0])
+            # elif (dataset == 'leonard' and key == 'event id') or (dataset == 'darpa_tc' and key == 'sequence'):
+            #     key_list[key]=str(int(re_values[key][int(translate_str(data[begin],key))])+mins[1])
+            elif (dataset == 'toy' and key == 'time'):# or (dataset == 'darpa_tc' and key == 'size'):
+                key_list[key]=str(translate_str(data[begin],key).replace(',', '.'))
             else:
-                key_list[key] = re_values[key][int(translate_str(data[begin], key))]
-            begin = begin + 1
+                key_list[key]=re_values[key][int(translate_str(data[begin],key))]
+            begin=begin+1
     return key_list
 
 
@@ -322,19 +318,28 @@ def iter_bfs_score(now, sett_edges, sett_points, G, mapp):  # 在一个图中搜
         searched.add(i[1])
 
 
-def query_bfs(start_nodes, sett_edges, sett_points, G, mapp):
+def query_bfs(start_nodes, sett_edges, sett_points, G, mapp, o0, sett_extra_nodes):
     q = Queue()
     q.put(start_nodes[0])
     stop_flag = False
-    while (not q.empty() and not stop_flag):
+    queries_nodes = []
+    queries_edges = []
+    while(not q.empty() and not stop_flag):
         cur_node = q.get()
         for item in G[mapp[cur_node]]:
             q.put(item[0])
-            sett_points.add(mapp[item[0]])  # item[0] debug
+            if(item[0] < len(o0)):
+                if item[0] not in sett_points:
+                    queries_nodes.append(item[0])  # 待查询还原详细信息的节点
+                    sett_points.add(item[0])
+            else:
+                sett_extra_nodes.add(item[0])
             sett_edges.add(item[1])
-            if (len(sett_points) + len(sett_edges) >= 20):
+            queries_edges.append(item[1])
+            if(len(sett_points) + len(sett_edges) + len(sett_extra_nodes)>= 20):
                 stop_flag = True
                 break
+    return queries_nodes + queries_edges
 
 
 # nodes_for_dataset=[[1099876,672640,1683629,514060,468934,1787378,495914,1673209,1854115,499163,1662376,1058801,692629,1339861,87517,423047,351501,1624091,695449,75339,1634507,791085,1616974,1612807,1639534,718370,1600687,702072,1807501,1304266,1360273,478092,284379,44238,569243,1132880,922447,2019306,140756,1009252,1506758,1191750,318206,674460,684007,1530136,684763,254500,1178172,364387,133153,1116597,673242,360253,1640513,852603,272086,1485387,592571,1230191,1829617,1189368,2015994,1578470,997119,1113838,1870472,1924379,1082974,792123,1736645,1554034,456956,1449898,172122,1822603,2085431,664535,324110,518400,291993,2027534,2069026,2026525,1819327,1435847,197891,146763,672947,1728040,1582844,1470589,979480,1034243,1642994,1369251,1506015,1506378,1064841,1527819],[386380,1419319,489746,1208589,1351369,1322994,1441152,1457591,831647,1019033,1000324,1619080,1536855,1650251,1235636,1219451,412740,1502708,1775852,184512,403005,1098833,45920,1659365,1340094,574275,217646,1773816,1463021,1497852,2026509,499354,1612677,739469,1509590,1806135,433571,1851742,989442,933631,1563975,805993,1113467,1475433,1687174,66988,1500081,374387,1549762,479145,119387,38651,157823,643752,1366003,799440,270628,118770,464675,1650723,119396,2016400,2019577,1499278,159201,1435211,1298889,1788413,1123153,1327216,1649102,1991089,185710,1758935,1650063,1128066,1628617,1371920,1875922,321859,1466785,2043339,1329074,476021,1029566,2077727,1298458,619837,1120426,1424348,518053,389895,1058097,215756,1217221,859212,1497905,687354,810243,2085209],[2054723,1172632,1485986,1549171,1058520,2176463,1212923,1455768,478597,836553,2285074,2223302,2051109,1898061,1206031,146034,757153,1409430,1184120,1277486,1055475,1381211,354411,1542675,547630,503181,977851,863289,602619,139201,626089,2029164,523411,980114,363525,2279184,1859295,951357,1763616,893035,1187182,1728043,2477699,2070710,254372,2121434,407311,1491560,315540,922657,248777,1799208,1127736,103205,437186,1657621,744882,1536181,1475247,2144395,1175033,1677416,1984768,1719981,112217,1954096,694702,1704130,1564996,725601,580634,2097648,1498115,1342585,554636,1358709,1397009,334768,2025087,2132241,2254621,122438,2369066,1920374,1003936,1563641,2303017,2112770,108813,1342015,2451765,277774,463982,2320394,662901,1372130,1873686,1327713,11605,1493703],[2028413,1537437,2307752,750488,12411,1457486,67400,919108,1706665,1721297,1355245,1710035,981014,2061880,786164,1296562,1888900,1408198,1689322,1271718,2256451,2152657,386670,440839,1457064,311472,371297,1063072,1089877,2228589,749696,1570158,647429,306897,2328721,1572136,114364,945255,1354622,1688894,863135,799935,770571,1241480,2093111,1606483,187486,2257951,689875,615366,1418675,1529873,1405346,169461,659628,795627,2212837,2381089,1481331,1229565,427972,1562650,2304459,16150,736761,592786,1673849,2324251,2368891,430015,343653,1309356,1564634,621348,1348223,1500490,1550379,2043612,1298832,35512,1464280,496359,1176916,288298,641753,2045693,2012950,357783,722411,1017849,779582,1533708,449980,2074509,116983,88608,795783,643371,1107616,745769],[1661382,1650724,1269905,526014,114253,1693696,1629943,1169519,1321876,1726021,1693831,1768043,1157268,1332937,847821,300570,624866,1628081,1228962,825931,113235,1455527,1584311,911150,770295,734539,296826,1310022,1697164,1218926,1410931,1762553,1117447,1412238,1144590,270948,1190897,1311171,1366439,470059,747390,705080,1736835,1288862,959894,1193369,1156745,1747874,324553,1365218,25873,950816,419235,1103630,1713625,1715518,192929,111477,1377550,1069384,765409,942147,1208167,604624,1033381,1635313,656383,1453264,975508,861160,1357715,1783658,562905,879057,98371,1402400,672634,231872,155267,1223763,1230825,752588,898699,1278801,1366493,1328788,229544,291064,1351109,1681764,127579,1293580,1551511,1294815,458605,1133961,784528,747790,393502,172665]]
@@ -371,6 +376,7 @@ def query(dataset):
 
     sett_edges = set()  # 边集
     sett_points = set()  # 节点集
+    sett_extra_nodes = set() #额外节点集
     final_results_v = []
     final_results_e = []
     # 遍历起始节点进行搜索
@@ -384,19 +390,9 @@ def query(dataset):
         # for i in indexx:
         #     now.append((i,o2[i],o1[i],1)) ###########【parent节点的索引，child节点号，parent边，权重值】
         # iter_bfs_score(now,sett_edges,sett_points,G,mapp)  #寻找关联的边集
-        query_bfs(start_nodes, sett_edges, sett_points, G, mapp)
+        query=query_bfs(start_nodes, sett_edges,sett_points,G,mapp, o0, sett_extra_nodes)
         ver_len = len(sett_points)  # 深搜搜到的节点的数目
 
-        query = []
-        for ver in sett_points:
-            query.append(o0[ver])  # 待查询还原详细信息的节点
-        # for item in o0:
-        #     if(item == 9116):
-        #         print()
-        # query[0] = 9116
-        # query[1] = 1883
-        for ed in sett_edges:
-            query.append(ed)  # 待查询还原详细信息的边
         end_time1 = time()
         np.random.seed(0)
         timesteps = 10  # 某个超参数
@@ -440,11 +436,13 @@ def query(dataset):
                                                                     -1)  # 完成模型预测详细信息恢复[2, 3, 4, 5, 3, 6, 7, 8, 10, 11, 12, 15, 18, 18, 12, 0, 11, 0, 11, 0, 10, 16, 12, 18, 0, 15, 18, 0, 18, 13, 15, 15, 0, 9, 0, 9, 0, 10, 11, 12, 15, 18, 18, 12, 0, 1]
             # 完成详细信息数字编码转换为最终字符串：{'hash': '1236993', 'cdmtype': 'SrcSinkObject', 'epoch': '258', 'fileDescriptor': '51', 'pid': '25254', 'source': 'SOURCE_LINUX_SYSCALL_TRACE', 'type': 'Object', 'uuid': '27b62dc819c0ebcf4131baf4fa52b004'}
             for i in range(len(final_sentences_v)):
-                ret = translate(final_sentences_v[i], flag=0)
+                ret = translate(final_sentences_v[i], dataset, flag=0)
                 if len(ret) != 0:
                     final_results_v.append(ret)
+            for item in sett_extra_nodes:
+                    final_results_v.append({"hash": item})
             for i in range(len(final_sentences_e)):
-                ret = translate(final_sentences_e[i], flag=0)
+                ret = translate(final_sentences_e[i], dataset, flag=0)
                 if len(ret) != 0:
                     final_results_e.append(ret)
         # final_result=[] #单纯的json转字符串，不知道想做啥。。。
@@ -515,4 +513,4 @@ def leonard_query_run(dataset='toy'):
 
 
 if __name__ == "__main__":
-    leonard_query_run(dataset='toy')
+    leonard_query_run(dataset='darpa_tc')

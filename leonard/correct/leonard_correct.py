@@ -10,10 +10,14 @@ import leonard.config as config
 # 模型参数
 batch_size = 1024
 seq_len = 10
-if torch.cuda.is_available():
-    device = torch.device('cuda:0')
-else:
-    device = torch.device('cpu')
+# if config.use_gpu:
+#     if torch.cuda.is_available():
+#         device = torch.device('cuda:0')
+#     else:
+#         device = torch.device('cpu')
+# else:
+#     device = torch.device('cpu')
+device = torch.device('cpu')
 # 训练数据及模型路径
 params_path = os.path.join(config.project_root, 'data/encode/params.json')
 data_path = os.path.join(config.project_root, 'data/encode/tensor.npy')

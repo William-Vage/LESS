@@ -87,7 +87,7 @@ def encode(dataset='darpa_optc', edge_file='', vertex_file='', out_zip_file_path
     print(f'Preprocess cost: {t_end - t_start}')
     # 2. Encode edge
     t_start = time.time()
-    edge_encode() #边id顺序
+    edge_encode(dataset) #边id顺序
     t_end = time.time()
     print(f'Encode edge cost: {t_end - t_start}')
     # 3. Train edge prediction model
@@ -173,7 +173,9 @@ def decode(dataset='darpa_optc', topology_model_name='xgboost',
     print(f'Regenerate origin parent-children edge dict cost: {t_end - t_start}')
     # 3. Query BFS(search children)
     t_start = time.time()
-    start_node_ids = [0] #list(correct_edge_dict.keys())[:100]
+    start_node_ids = [0]
+    if dataset == 'darpa_tc':
+        start_node_ids = [39985]
     nodes_ids, edges_dict_list = query_bfs(correct_edge_dict, start_node_ids, 20)
     print('node id + edge id = ', len(nodes_ids) + len(edges_dict_list))
     print(f'query cost: {t_end - t_start}')

@@ -5,22 +5,36 @@ import os
 import csv
 
 
-def read_arrays_from_file(file_path):
+def read_arrays_from_file(edge_file_path, node_file_path=''):
     """
     读取edge连接关系文件，转成array
     :param file_path:
     :return:
     """
     res = [[], [], []]
-    i = 0
+    cnt_node_id = 0
     # 创建一个空字典，用于存储已读取的行
     hash_dict = {}
-    with open(file_path, 'r') as f:
+    if node_file_path != '':
+        with open(node_file_path, 'r') as f:
+            # 跳过第一行
+            next(f)
+            # 读取文件的每一行
+            lines = f.readlines()
+            for line in tqdm(lines, total=len(lines)):
+                # 去除首尾空白符
+                line = line.strip()
+                if line:
+                    if line not in hash_dict:
+                        hash_dict[line] = cnt_node_id
+                        cnt_node_id += 1
+        print(len(hash_dict))
+    with open(edge_file_path, 'r') as f:
         # 跳过第一行
         next(f)
         # 读取文件的每一行
         lines = f.readlines()
-        cnt = 0
+        cnt_edge_id = 0
         for line in tqdm(lines, total=len(lines)):
             # 去除首尾空白符
             line = line.strip()
@@ -28,12 +42,12 @@ def read_arrays_from_file(file_path):
                 line_items = line.split(',')
                 for item in line_items:
                     if item not in hash_dict:
-                        hash_dict[item] = i
-                        i += 1
+                        hash_dict[item] = cnt_node_id
+                        cnt_node_id += 1
                 res[0].append(hash_dict[line_items[0]])  # parent node id
                 res[1].append(hash_dict[line_items[1]])  # child node id
-                res[2].append(cnt)  # p-c edge id
-                cnt += 1
+                res[2].append(cnt_edge_id)  # p-c edge id
+                cnt_edge_id += 1
 
     return res
 
@@ -117,19 +131,20 @@ def dict2npy(my_dict, file_path):
     np.save(file_path, tensor_data_array)
 
 
-def edge_encode():
+def edge_encode(dataset):
     # 指定文件路径
-    input_file_path = os.path.join(config.project_root, 'data/preprocess/edge_id.csv')
+    input_edgefile_path = os.path.join(config.project_root, 'data/preprocess/edge_id.csv')
+    input_nodefile_path = os.path.join(config.project_root, 'data/preprocess/node_id.csv')
     out_file_path = os.path.join(config.project_root, 'data/encode/edge_encode.npy')
     # 调用函数读取文件中的数组
-    arrays = read_arrays_from_file(input_file_path)
+    if dataset == 'darpa_optc':
+        arrays = read_arrays_from_file(input_edgefile_path)
+    else:
+        arrays = read_arrays_from_file(input_edgefile_path, input_nodefile_path)
     # 将数组转换成dict
     ret = insert_values_to_dict(arrays)
     # 将数组保存成npy文件，用于进一步的压缩
     dict2npy(ret, out_file_path)
-    # # test: 将dict存成csv，以供解码对比
-    # test_dict_to_csv(ret, os.path.join(config.project_root, 'data/preprocess/test_edge_dict_encode.csv'))
-
 
 def test_dict_to_csv(my_dict, out_file):
     # 提取字典中的键和值

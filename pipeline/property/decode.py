@@ -84,6 +84,8 @@ def transform_json(headers: list[str], csv_str: str, dtype: str, extra_info: lis
         elif dtype == 'vertex':
             value['hash'] = str(extra_info[i])
         clean_records.append(value)
+    for i in range(len(records), len(extra_info)):
+        clean_records.append({'hash': str(extra_info[i])})
     json_data = json.dumps(clean_records, ensure_ascii=False, indent=4)
     return json_data
 
@@ -115,7 +117,7 @@ def property_decode(dtype: str, ids: list):
             encoded_vertex_properties = f.read().split(bytes([0xff]))
         headers = decode_line(encoded_vertex_properties, 0).split(',')
         for i in range(len(ids)):
-            if len(encoded_vertex_properties[i]) > 0:
+            if len(encoded_vertex_properties[i]) > 0 and ids[i] + 1 < len(encoded_vertex_properties):
                 decode_vertex_properties += decode_line(encoded_vertex_properties, ids[i] + 1) + '\n'
         vertex_decode_file = os.path.join(config.project_root, 'data/decode/vertex_property.json')
         decode_json = transform_json(headers, decode_vertex_properties, 'vertex', ids)
