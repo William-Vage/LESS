@@ -47,7 +47,7 @@ def clear_dir():
 def leonard_run(dataset='toy'):
     if dataset == 'darpa_tc':
         edges_list = ['ta1-trace-3-e5-official-1.bin.1_concatenated_edges_top_300000.csv']
-        vertices_list = ['ta1-trace-3-e5-official-1.bin.1_concatenated_vertices_top_300000.csv']
+        vertices_list = ['ta1-trace-3-e5-official-1.bin.1_concatenated_vertices_top_40000.csv']
     elif dataset == 'toy':
         edges_list = ['edge200m.csv']
         vertices_list = ['vertex200m.csv']

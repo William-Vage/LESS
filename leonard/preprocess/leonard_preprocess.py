@@ -175,6 +175,8 @@ class LeonardEncoder(BaseEncoder):
         unique_values_vertex = create_unique_mapping_dict(self.vertex)
         unique_values_edge = create_unique_mapping_dict(self.edge, exclude_col=['id'])
         result_dict = unique_values_vertex.copy()
+        result_dict['id'] = result_dict['id'].union(unique_values_edge['subject_id'])
+        result_dict['id'] = result_dict['id'].union(unique_values_edge['predicate_id'])
         # 合并集合
         for key, value_set in unique_values_edge.items():
             if key in result_dict:

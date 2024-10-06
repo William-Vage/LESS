@@ -282,6 +282,12 @@ sample文件夹下存储了LESS及Leonard在数据集上的预期输出样例，
 
 ## toy数据集
 
+### 样例文件
+* Leonard: sample/leonard_toy_output_demo.zip
+* LESS: sample/less_toy_output_demo.zip
+
+### 性能指标
+
 | 方案      | CPU/GPU | 预处理时长 | 压缩时长   | 查询时长 | 总时长    | 存储空间   |  
 |:--------|:--------|:------|:-------|:-----|:-------|:-------|  
 | Leonard | CPU     | 4.0s  | 241.8s | 2.8s | 248.6s | 2.14MB | 
@@ -290,14 +296,26 @@ sample文件夹下存储了LESS及Leonard在数据集上的预期输出样例，
 
 ## Darpa TC数据集
 
-| 方案      | CPU/GPU | 预处理时长 | 压缩时长   | 查询时长 | 总时长    | 存储空间   |  
-|:--------|:--------|:------|:-------|:-----|:-------|:-------|  
-| Leonard | CPU     | 15.7s | 355.8s | 1.3s | 372.8s | 3.14MB | 
-| Leonard | GPU     |       |        |      |        |        |
-| LESS    | CPU     | 3.2s  | 14.5s  | 2.3s | 16.8s  | 2.28MB |
+### 样例文件
+* Leonard: sample/leonard_darpatc_output_demo.zip
+* LESS: sample/less_darpatc_output_demo.zip
+
+### 性能指标
+
+| 方案      | CPU/GPU | 预处理时长 | 压缩时长   | 查询时长  | 总时长    | 存储空间   |  
+|:--------|:--------|:------|:-------|:------|:-------|:-------|  
+| Leonard | CPU     | 9.8s  | 224.5s | 5.9s  | 240.2s | 5.45MB | 
+| Leonard | GPU     |       |        |       |        |        |
+| LESS    | CPU     | 1.9s  | 26.7s  | 23.0s | 51.6s  | 1.28MB |
 
 ## Darpa OpTC数据集
 
-| 方案      | CPU/GPU | 预处理时长 | 压缩时长   | 查询时长 | 总时长    | 存储空间   |  
-|:--------|:--------|:------|:-------|:-----|:-------|:-------|
-| LESS    | CPU     |       |        |      |        |        |
+### 样例文件
+
+* LESS: sample/less_darpaoptc_output_demo.zip
+
+### 性能指标
+
+| 方案      | CPU/GPU | 预处理时长 | 压缩时长  | 查询时长  | 总时长   | 存储空间   |  
+|:--------|:--------|:------|:------|:------|:------|:-------|
+| LESS    | CPU     | 2.8s  | 35.4s | 25.5s | 63.7s | 6.81MB |
