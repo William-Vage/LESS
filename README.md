@@ -223,4 +223,110 @@ python scripts/run_darpatc.py
 python scripts/run_darpaoptc.py
 ```
 
+# Leonard：使用说明
 
+This section reproduces the experiments from the toy dataset and part of the DARPA TC dataset from the paper "The Case for Learned Provenance Graph Storage Systems." 
+
+1. Install Python 3.11.5 environment, and then install the following dependencies: 
+```shell
+pip install -r requirements.txt
+```
+
+2. Extract the original dataset 
+
+linux
+```shell
+unzip data/raw/datasets.zip -d leonard/data/raw
+```
+Windows needs to unzip the file to the "data/raw/leonard" folder. 
+
+3. Set environment variables 
+
+Set environment variables in the root directory of the project.
+
+windows
+```shell
+$env:PYTHONPATH = "$env:PYTHONPATH;$PWD"
+```
+
+linux
+```shell
+export PYTHONPATH=$PYTHONPATH:$(pwd)
+```
+
+4. Conduct the experiment. 
+
+The command to run the experiment needs to be executed in the root directory of the project. 
+
+Each script will perform the following functions: 
+
+* generate compressed data set in the leonard/data/compress directory
+* generate topological relationships, node and edge attributes values of queried nodes in the leonard/data/query_result directory 
+* generate intermediate files for preprocessing the data set in the leonard/data/preprocess directory 
+* generate encoded results in the leonard/data/encode directory 
+* generate LSTM model parameters in the leonard/data/model directory 
+* generate prediction correction table in the leonard/data/correct directory 
+
+```shell
+python leonard/run_toy.py
+```
+
+```shell
+python leonard/run_darpatc.py
+```
+
+
+
+
+
+*We have published the results obtained from our implementation on our own machine, providing a reference for reproducing the results.*
+
+## Expected Results
+
+The *sample* folder stores the expected output examples of LESS and Leonard on the dataset. The table below summarizes the runtime and storage overhead on the test machine.
+
+The hardware configuration of the test machine is as follows:
+
+* CPU: Intel i5-13490F
+* Memory: 32GB
+* GPU: NVIDIA GeForce RTX 4070 Ti
+
+## Toy Dataset
+
+### Sample Files
+* Leonard: sample/leonard_toy_output_demo.zip
+* LESS: sample/less_toy_output_demo.zip
+
+### Performance Metrics
+
+| Solution | CPU/GPU | Preprocessing Time | Compression Time | Query Time | Total Time | Storage Space |
+| :------- | :------ | :----------------- | :--------------- | :--------- | :--------- | :------------ |
+| Leonard  | CPU     | 4.2s               | 102.6s           | 2.3s       | 109.1s     | 2.15MB        |
+| Leonard  | GPU     | 4.2s               | 49.6s            | 2.5s       | 56.3s      | 2.13MB        |
+| LESS     | CPU     | 0.7s               | 6.6s             | 4.8s       | 12.1s      | 0.62MB        |
+
+## Darpa TC Dataset
+
+### Sample Files
+* Leonard: sample/leonard_darpatc_output_demo.zip
+* LESS: sample/less_darpatc_output_demo.zip
+
+### Performance Metrics
+
+| Solution | CPU/GPU | Preprocessing Time | Compression Time | Query Time | Total Time | Storage Space |
+| :------- | :------ | :----------------- | :--------------- | :--------- | :--------- | :------------ |
+| Leonard  | CPU     | 10.7s              | 241.3s           | 5.3s       | 257.3s     | 6.04MB        |
+| Leonard  | GPU     | 10.8s              | 93.9s            | 5.7s       | 110.4s     | 6.06MB        |
+| LESS     | CPU     | 1.8s               | 25.9s            | 14.8s      | 42.5s      | 1.12MB        |
+
+## Darpa OpTC Dataset
+
+### Sample Files
+
+* LESS: sample/less_darpaoptc_output_demo.zip
+
+### Performance Metrics
+
+| Solution | CPU/GPU | Preprocessing Time | Compression Time | Query Time | Total Time | Storage Space |
+| :------- | :------ | :----------------- | :--------------- | :--------- | :--------- | :------------ |
+| LESS     | CPU     | 2.5s               | 34.3s            | 16.1s      | 52.9s      | 6.81MB        |
