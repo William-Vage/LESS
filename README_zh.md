@@ -280,11 +280,24 @@ sample文件夹下存储了LESS及Leonard在数据集上的预期输出样例，
 * 内存：32GB
 * 显卡：NVIDIA GeForce RTX 4070 Ti
 
+对于查询部分，在样例数据集上我们查询**固定节点**的邻域。你可以修改查询节点的id以及搜索深度，以观察不同结果。
+
+*注意：如果节点仅在边数据中出现，无法在节点数据中找到对应条目，那么节点查询结果就仅包含一个hash字段。darpa optc数据集不包含节点数据。*
+
 ## toy数据集
 
 ### 样例文件
-* Leonard: sample/leonard_toy_output_demo.zip
-* LESS: sample/less_toy_output_demo.zip
+
+* 存储
+  * Leonard: sample/compress/leonard_toy_output_demo.zip
+  * LESS: sample/compress/less_toy_output_demo.zip
+* 查询
+  * Leonard: 
+    * 边：sample/query/leonard_toy_query_result_edge.json
+    * 节点：sample/query/leonard_toy_query_result_vertex.json
+  * LESS:
+    * 边：sample/query/less_toy_edges_query.json
+    * 节点：sample/query/less_toy_nodes_query.json
 
 ### 性能指标
 
@@ -297,8 +310,17 @@ sample文件夹下存储了LESS及Leonard在数据集上的预期输出样例，
 ## Darpa TC数据集
 
 ### 样例文件
-* Leonard: sample/leonard_darpatc_output_demo.zip
-* LESS: sample/less_darpatc_output_demo.zip
+
+* 存储
+  * Leonard: sample/compress/leonard_darpatc_output_demo.zip
+  * LESS: sample/compress/less_darpatc_output_demo.zip
+* 查询
+  * Leonard: 
+    * 边：sample/query/leonard_darpa_tc_query_result_edge.json
+    * 节点：sample/query/leonard_darpa_tc_query_result_vertex.json
+  * LESS:
+    * 边：sample/query/less_darpa_tc_edges_query.json
+    * 节点：sample/query/less_darpa_tc_nodes_query.json
 
 ### 性能指标
 
@@ -312,7 +334,12 @@ sample文件夹下存储了LESS及Leonard在数据集上的预期输出样例，
 
 ### 样例文件
 
-* LESS: sample/less_darpaoptc_output_demo.zip
+* 存储
+  * LESS: sample/compress/less_darpaoptc_output_demo.zip
+* 查询
+  * LESS:
+    * 边：sample/query/less_darpa_optc_edges_query.json
+    * 节点：sample/query/less_darpa_optc_nodes_query.json
 
 ### 性能指标
 

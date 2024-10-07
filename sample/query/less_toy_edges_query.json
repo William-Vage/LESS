@@ -1,0 +1,109 @@
+[
+    {
+        "type": "WasGeneratedBy",
+        "event id": 179355905,
+        "size": 11779.0,
+        "source": "syscall",
+        "time": 1599348196.893,
+        "operation": "truncate",
+        "parentVertexHash": "0",
+        "childVertexHash": "1"
+    },
+    {
+        "type": "WasGeneratedBy",
+        "event id": 179355907,
+        "size": 11779.0,
+        "source": "syscall",
+        "time": 1599348196.893,
+        "operation": "truncate",
+        "parentVertexHash": "0",
+        "childVertexHash": "2"
+    },
+    {
+        "type": "WasGeneratedBy",
+        "event id": 179356020,
+        "source": "syscall",
+        "time": 1599348196.917,
+        "operation": "create",
+        "mode": 600.0,
+        "flags": "O_RDWR|O_TRUNC|O_CREAT",
+        "parentVertexHash": "0",
+        "childVertexHash": "3"
+    },
+    {
+        "type": "WasGeneratedBy",
+        "event id": 179356040,
+        "size": 13071.0,
+        "source": "syscall",
+        "time": 1599348196.917,
+        "operation": "truncate",
+        "parentVertexHash": "0",
+        "childVertexHash": "5"
+    },
+    {
+        "type": "WasGeneratedBy",
+        "event id": 179356046,
+        "source": "syscall",
+        "time": 1599348196.917,
+        "operation": "close",
+        "parentVertexHash": "0",
+        "childVertexHash": "5"
+    },
+    {
+        "type": "WasGeneratedBy",
+        "event id": 179356050,
+        "source": "syscall",
+        "time": 1599348196.921,
+        "operation": "unlink",
+        "parentVertexHash": "0",
+        "childVertexHash": "6"
+    },
+    {
+        "type": "WasGeneratedBy",
+        "event id": 179356054,
+        "source": "syscall",
+        "time": 1599348196.921,
+        "operation": "unlink",
+        "parentVertexHash": "0",
+        "childVertexHash": "7"
+    },
+    {
+        "type": "WasGeneratedBy",
+        "event id": 179356187,
+        "source": "syscall",
+        "time": 1599348196.941,
+        "operation": "open",
+        "flags": "O_RDWR",
+        "parentVertexHash": "0",
+        "childVertexHash": "8"
+    },
+    {
+        "type": "WasGeneratedBy",
+        "event id": 179356263,
+        "size": 13272.0,
+        "source": "syscall",
+        "time": 1599348196.953,
+        "operation": "truncate",
+        "parentVertexHash": "0",
+        "childVertexHash": "9"
+    },
+    {
+        "type": "WasGeneratedBy",
+        "event id": 179356264,
+        "source": "syscall",
+        "time": 1599348196.953,
+        "operation": "close",
+        "parentVertexHash": "0",
+        "childVertexHash": "9"
+    },
+    {
+        "type": "WasGeneratedBy",
+        "event id": 179356327,
+        "source": "syscall",
+        "time": 1599348196.985,
+        "operation": "mmap (write)",
+        "protection": 3.0,
+        "parentVertexHash": "0",
+        "childVertexHash": "10"
+    }
+]

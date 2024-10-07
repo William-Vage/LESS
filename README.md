@@ -225,7 +225,7 @@ python scripts/run_darpatc.py
 python scripts/run_darpaoptc.py
 ```
 
-# Leonard：使用说明
+# Leonard：Usage
 
 This section reproduces the experiments from the toy dataset and part of the DARPA TC dataset from the paper "The Case for Learned Provenance Graph Storage Systems." 
 
@@ -278,12 +278,9 @@ python leonard/run_darpatc.py
 ```
 
 
-
-
-
 *We have published the results obtained from our implementation on our own machine, providing a reference for reproducing the results.*
 
-## Expected Results
+# Expected Results
 
 The *sample* folder stores the expected output examples of LESS and Leonard on the dataset. The table below summarizes the runtime and storage overhead on the test machine.
 

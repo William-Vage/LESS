@@ -1,0 +1,173 @@
+[
+    {
+        "sequence": 8917879,
+        "type": "EVENT_READ",
+        "threadId": 25992,
+        "timestampNanos": 1557239724514000000,
+        "size": 4076.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917880,
+        "type": "EVENT_READ",
+        "threadId": 25992,
+        "timestampNanos": 1557239724514000000,
+        "size": 4080.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917881,
+        "type": "EVENT_READ",
+        "threadId": 25992,
+        "timestampNanos": 1557239724514000000,
+        "size": 4080.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917882,
+        "type": "EVENT_READ",
+        "threadId": 25992,
+        "timestampNanos": 1557239724514000000,
+        "size": 4080.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917883,
+        "type": "EVENT_READ",
+        "threadId": 25992,
+        "timestampNanos": 1557239724514000000,
+        "size": 4080.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917884,
+        "type": "EVENT_READ",
+        "threadId": 25992,
+        "timestampNanos": 1557239724514000000,
+        "size": 4080.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917885,
+        "type": "EVENT_READ",
+        "threadId": 25992,
+        "timestampNanos": 1557239724514000000,
+        "size": 4080.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917886,
+        "type": "EVENT_READ",
+        "threadId": 25992,
+        "timestampNanos": 1557239724514000000,
+        "size": 2760.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917887,
+        "type": "EVENT_WRITE",
+        "threadId": 25992,
+        "timestampNanos": 1557239724514000000,
+        "size": 32.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917890,
+        "type": "EVENT_READ",
+        "threadId": 25992,
+        "timestampNanos": 1557239724526000000,
+        "size": 16.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917891,
+        "type": "EVENT_WRITE",
+        "threadId": 25992,
+        "timestampNanos": 1557239724526000000,
+        "size": 32.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917894,
+        "type": "EVENT_READ",
+        "threadId": 25992,
+        "timestampNanos": 1557239724526000000,
+        "size": 4096.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917898,
+        "type": "EVENT_READ",
+        "threadId": 25992,
+        "timestampNanos": 1557239724526000000,
+        "size": 4096.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917899,
+        "type": "EVENT_READ",
+        "threadId": 25992,
+        "timestampNanos": 1557239724526000000,
+        "size": 4080.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917900,
+        "type": "EVENT_READ",
+        "threadId": 25992,
+        "timestampNanos": 1557239724526000000,
+        "size": 4080.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917901,
+        "type": "EVENT_READ",
+        "threadId": 25992,
+        "timestampNanos": 1557239724526000000,
+        "size": 4080.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917903,
+        "type": "EVENT_READ",
+        "threadId": 25992,
+        "timestampNanos": 1557239724526000000,
+        "size": 4080.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917904,
+        "type": "EVENT_READ",
+        "threadId": 25992,
+        "timestampNanos": 1557239724526000000,
+        "size": 4080.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    },
+    {
+        "sequence": 8917905,
+        "type": "EVENT_READ",
+        "threadId": 25992,
+        "timestampNanos": 1557239724526000000,
+        "size": 4080.0,
+        "parentVertexHash": "39985",
+        "childVertexHash": "39986"
+    }
+]

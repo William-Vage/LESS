@@ -1,0 +1,92 @@
+[
+    {
+        "type": "Artifact",
+        "source": "syscall",
+        "epoch": 0.0,
+        "fd": 90.0,
+        "subtype": "unknown",
+        "tgid": 67216.0,
+        "version": 1.0,
+        "hash": "1"
+    },
+    {
+        "type": "Artifact",
+        "source": "syscall",
+        "epoch": 0.0,
+        "fd": 90.0,
+        "subtype": "unknown",
+        "tgid": 67216.0,
+        "version": 2.0,
+        "hash": "2"
+    },
+    {
+        "type": "Artifact",
+        "source": "syscall",
+        "epoch": 0.0,
+        "subtype": "file",
+        "version": 0.0,
+        "path": "/home/log1/.cache/mozilla/firefox/anmp96vk.default/cache2/entries/C7D750CC32FE1BC8A67484F2B7A29EE0177F6C8C",
+        "permissions": 600.0,
+        "hash": "3"
+    },
+    {
+        "type": "Artifact",
+        "source": "syscall",
+        "epoch": 0.0,
+        "subtype": "file",
+        "version": 1.0,
+        "path": "/home/log1/.cache/mozilla/firefox/anmp96vk.default/cache2/entries/C7D750CC32FE1BC8A67484F2B7A29EE0177F6C8C",
+        "permissions": 600.0,
+        "hash": "5"
+    },
+    {
+        "type": "Artifact",
+        "source": "syscall",
+        "epoch": 0.0,
+        "subtype": "file",
+        "version": 0.0,
+        "path": "/home/log1/.cache/mozilla/firefox/anmp96vk.default/cache2/entries/46256DCCA61F7780608DEA9FB5137423679DB1D3",
+        "permissions": 600.0,
+        "hash": "6"
+    },
+    {
+        "type": "Artifact",
+        "source": "syscall",
+        "epoch": 0.0,
+        "subtype": "file",
+        "version": 0.0,
+        "path": "/home/log1/.cache/mozilla/firefox/anmp96vk.default/cache2/entries/FFB46026DEAE7D86E167A76B4B9A9654C5710425",
+        "permissions": 600.0,
+        "hash": "7"
+    },
+    {
+        "type": "Artifact",
+        "source": "syscall",
+        "epoch": 0.0,
+        "subtype": "file",
+        "version": 0.0,
+        "path": "/home/log1/.cache/mozilla/firefox/anmp96vk.default/cache2/entries/24FB203CC2D69AA95B526BF9B65638E8CDCBD6D8",
+        "permissions": 600.0,
+        "hash": "8"
+    },
+    {
+        "type": "Artifact",
+        "source": "syscall",
+        "epoch": 0.0,
+        "subtype": "file",
+        "version": 1.0,
+        "path": "/home/log1/.cache/mozilla/firefox/anmp96vk.default/cache2/entries/24FB203CC2D69AA95B526BF9B65638E8CDCBD6D8",
+        "permissions": 600.0,
+        "hash": "9"
+    },
+    {
+        "type": "Artifact",
+        "source": "syscall",
+        "subtype": "memory",
+        "tgid": 67216.0,
+        "version": 0.0,
+        "memory address": "7f0d87f00000",
+        "size": 200000.0,
+        "hash": "10"
+    }
+]
