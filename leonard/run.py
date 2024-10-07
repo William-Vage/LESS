@@ -1,3 +1,5 @@
+from distributed.metrics import process_time
+
 from preprocess.leonard_preprocess import leonard_preprocess_func
 from train.leonard_train import leonard_train_func
 from correct.leonard_correct import leonard_correct_func
@@ -54,12 +56,16 @@ def leonard_run(dataset='toy'):
 
     edge_file = os.path.join(config.project_root, 'data/raw/' + edges_list[0])
     vertex_file = os.path.join(config.project_root, 'data/raw/' + vertices_list[0])
-    leonard_preprocess_func(leonard_edge_file=edge_file, leonard_vertex_file=vertex_file, dataset=dataset)
-    leonard_train_func()
-    leonard_correct_func()
+    preprocess_time = leonard_preprocess_func(leonard_edge_file=edge_file, leonard_vertex_file=vertex_file, dataset=dataset)
+    train_time = leonard_train_func()
+    correct_time = leonard_correct_func()
+    compression_time = train_time + correct_time
+    print(f"\033[33m Compression Time: {compression_time:.1f}s \033[0m")
     out_zip_file = os.path.join(config.project_root, 'data/compress/leonard_' + dataset + '_output.zip')
     leonard_zip_output_files(out_zip_file)
-    leonard_query_run(dataset)
+    query_time = leonard_query_run(dataset)
+    total_time = preprocess_time + compression_time + query_time
+    print(f"\033[33m Total Time: {total_time:.1f}s \033[0m")
 
 
 def leonard_zip_output_files(out_zip_file):

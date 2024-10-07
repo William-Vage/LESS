@@ -137,4 +137,6 @@ def leonard_correct_func():
     corrector.save(calibration_table_dir, 'my_calibration_table.json')
     del corrector
     t_end = time.time()
-    print(f'Correct cost: {t_end - t_start}')
+    t_cost = t_end - t_start
+    print(f'Correct cost: {t_cost}')
+    return t_cost

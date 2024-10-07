@@ -509,7 +509,9 @@ def leonard_query_run(dataset='toy'):
 
     query(dataset)
     end_time = time()
-    print('Query time: ', end_time - begin_time)
+    t_cost = end_time - begin_time
+    print(f'\033[33m Query time: {t_cost:.1f}s \033[0m')
+    return t_cost
 
 
 if __name__ == "__main__":

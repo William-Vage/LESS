@@ -284,6 +284,8 @@ sample文件夹下存储了LESS及Leonard在数据集上的预期输出样例，
 
 *注意：如果节点仅在边数据中出现，无法在节点数据中找到对应条目，那么节点查询结果就仅包含一个hash字段。darpa optc数据集不包含节点数据。*
 
+要切换leonard是cpu/gpu环境运行，请修改leonard/config.py中的use_gpu变量，默认使用gpu运行。
+
 ## toy数据集
 
 ### 样例文件

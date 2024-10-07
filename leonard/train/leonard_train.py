@@ -111,4 +111,6 @@ def leonard_train_func():
     trainer = LeonardTrainer(save_dir=model_dir, model_name=name)
     trainer.train()
     t_end = time.time()
-    print(f'Train model cost: {t_end - t_start}')
+    t_cost = t_end - t_start
+    print(f'Train model cost: {t_cost}')
+    return t_cost

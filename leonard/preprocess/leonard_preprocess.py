@@ -344,4 +344,6 @@ def leonard_preprocess_func(leonard_edge_file='', leonard_vertex_file='', datase
     # 保存编码后的数据
     encoder.save_data(save_path)
     t_end = time.time()
-    print(f'Preprocess cost: {t_end - t_start}')
+    t_cost = t_end - t_start
+    print(f"\033[33m Preprocessing Time: {t_cost:.1f}s \033[0m")
+    return t_cost

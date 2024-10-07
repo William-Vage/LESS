@@ -84,7 +84,8 @@ def encode(dataset='darpa_optc', edge_file='', vertex_file='', out_zip_file_path
     elif dataset == 'darpa_optc':
         preprocess_darpa_optc(edge_file)
     t_end = time.time()
-    print(f'Preprocess cost: {t_end - t_start}')
+    t_cost_preprocess = t_end - t_start
+    print(f"\033[33m Preprocessing Time: {t_cost_preprocess:.1f}s \033[0m")
     # 2. Encode edge
     t_start = time.time()
     edge_encode(dataset) #边id顺序
@@ -120,7 +121,12 @@ def encode(dataset='darpa_optc', edge_file='', vertex_file='', out_zip_file_path
     print(f'Make zip file cost: {t_end - t_start}')
     # 7. Output total time
     program_end = time.time()
-    print(f'Total cost: {program_end - program_start}')
+    total_cost = program_end - program_start
+    compression_time = total_cost - t_cost_preprocess
+    # print(f'Total cost: {program_end - program_start}')
+    print(f"\033[33m Compression Time: {compression_time:.1f}s \033[0m")
+    return total_cost
+
 
 
 def decode(dataset='darpa_optc', topology_model_name='xgboost',
@@ -208,7 +214,11 @@ def decode(dataset='darpa_optc', topology_model_name='xgboost',
         f.write(edges_json)
     # 6. Output total time
     program_end = time.time()
-    print(f'Total cost: {program_end - program_start}')
+    total_cost = program_end - program_start
+    # print(f'Total cost: {program_end - program_start}')
+    print(f'\033[33m Query time: {total_cost:.1f}s \033[0m')
+    return total_cost
+
 
 
 if __name__ == '__main__':
