@@ -282,6 +282,10 @@ sample文件夹下存储了LESS及Leonard在数据集上的预期输出样例，
 
 对于查询部分，在样例数据集上我们查询**固定节点**的邻域。你可以修改查询节点的id以及搜索深度，以观察不同结果。
 
+修改查询节点的方法：
+* less，修改scripts/run.py中全局变量start_node_ids
+* leonard，修改leonard/query_withedge_vertex_removeedge_darpa_batch.py中全局变量start_node_ids
+
 *注意：如果节点仅在边数据中出现，无法在节点数据中找到对应条目，那么节点查询结果就仅包含一个hash字段。darpa optc数据集不包含节点数据。*
 
 要切换leonard是cpu/gpu环境运行，请修改leonard/config.py中的use_gpu变量，默认使用gpu运行。

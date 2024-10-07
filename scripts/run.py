@@ -17,6 +17,8 @@ import json
 import shutil
 import zipfile
 
+start_node_ids = [0]
+
 
 def property_optc_experiments():
     preprocess_darpa_optc()
@@ -181,7 +183,7 @@ def decode(dataset='darpa_optc', topology_model_name='xgboost',
     print(f'Regenerate origin parent-children edge dict cost: {t_end - t_start}')
     # 3. Query BFS(search children)
     t_start = time.time()
-    start_node_ids = [0]
+    global start_node_ids
     if dataset == 'darpa_tc':
         start_node_ids = [39985]
     nodes_ids, edges_dict_list = query_bfs(correct_edge_dict, start_node_ids, 20)
