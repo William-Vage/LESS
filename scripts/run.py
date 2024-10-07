@@ -56,6 +56,8 @@ def clear_dir():
         # Delete all contents under the folder
         try:
             for filename in os.listdir(folder_path):
+                if filename == '.gitkeep':
+                    continue
                 file_path = os.path.join(folder_path, filename)
                 if os.path.isfile(file_path):
                     os.unlink(file_path)
