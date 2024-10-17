@@ -147,18 +147,18 @@ class Re_Corrector:
                 n = struct.unpack('<H', n_byte)
                 n = int(n[0])
                 # 如果最高位为1，表示需要读取额外的偏移量
-                if n & 0x8000:   
+                if n & 0x8000:
                     n &= ~0x8000
                     cnt += n * 128
-                    #读取偏移量和数据值
-                    res_data_byte =f.read(2)
+                    # 读取偏移量和数据值
+                    res_data_byte = f.read(2)
                     if not res_data_byte:
                         break
                     res, data = struct.unpack('<BB', res_data_byte)
                 else:
                     res, data = struct.unpack('<BB', n_byte)
                 cnt += res
-                #更新data和wrong_pred列表
+                # 更新data和wrong_pred列表
                 self.wrong_pred += [0] * (cnt - 1)
                 self.data += [-1] * (cnt - 1)
                 self.data.append(data)

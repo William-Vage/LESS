@@ -41,3 +41,5 @@ data/*/*
 !data/raw/datasets.zip
 leonard/data/*/*
 !leonard/data/*/.gitkeep
+seal/data/*
+/seal/data/
