@@ -1,7 +1,7 @@
 # Table of Contents
-
-
 *Our paper is currently under major revision. The current version already includes the implementation of all methods and experiments in the review. We will update the code as soon as the revision is completed.*
+
+
 1. Work Content
 2. File Contents
 3. Instructions
@@ -278,9 +278,21 @@ python leonard/run_darpatc.py
 ```
 
 
-*We have published the results obtained from our implementation on our own machine, providing a reference for reproducing the results.*
+For the query part, we query the neighborhood of a fixed node on the sample dataset. You can modify the query node ID and search depth to observe different results.
+
+To modify the query node:
+* LESS: Modify the global variable start_node_ids in scripts/run.py
+* Leonard: Modify the global variable start_node_ids in leonard/query_withedge_vertex_removeedge_darpa_batch.py
+
+Note: If the node only appears in the edge data and no corresponding entry is found in the node data, the query result will only contain a hash field. The Darpa OpTC dataset does not contain node data.
+
+To switch between CPU/GPU environments for Leonard, modify the use_gpu variable in leonard/config.py. By default, GPU is used.
+
 
 # Expected Results
+
+*We have published the results obtained from our implementation on our own machine, providing a reference for reproducing the results.*
+
 
 The *sample* folder stores the expected output examples of LESS and Leonard on the dataset. The table below summarizes the runtime and storage overhead on the test machine.
 
