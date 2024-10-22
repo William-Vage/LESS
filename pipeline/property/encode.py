@@ -15,7 +15,7 @@ import os
 # 模型设置
 batch_size = 1024
 max_loop_time = 5
-max_dis = 127
+max_dis = 100
 n_limit = 512000
 
 
@@ -264,7 +264,7 @@ def encode_line(a: list, file):
     """
     # 差分存储父节点id
     # if prev_a is None or a[0] != prev_a[0]:
-    v = max_dis + a[0] - a[1]
+    v = 127 + a[0] - a[1]
     f_id = bytes([v])
     file.write(f_id)
     # 遍历操作
