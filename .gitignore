@@ -43,3 +43,4 @@ leonard/data/*/*
 !leonard/data/*/.gitkeep
 seal/data/*
 /seal/data/
+tree_structure.json

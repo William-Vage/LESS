@@ -286,8 +286,13 @@ def encode_line(a: list, file):
             file.write(pos_bin)
         # 如果是删除，且删除的是一个区间
         if op == 'delete':
-            # if pos != value:
-            file.write(bytes([value - pos + 1]))
+            diff = value - pos + 1
+            if diff <= 0xfa:
+                file.write(bytes([diff]))
+            else:
+                file.write(bytes([0xfe]))
+                diff_bin = struct.pack('<H', diff)
+                file.write(diff_bin)
         else:
             file.write(value.encode())
     file.write(bytes([0xff]))

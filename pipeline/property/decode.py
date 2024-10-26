@@ -47,6 +47,9 @@ def decode_line(lines: list[bytes], loc) -> str:
             # 如果是删除，且删除的是一个区间
             s2 = line[p]
             p += 1
+            if s2 == 0xfe:
+                s2 = struct.unpack('<H', line[p: p + 2])[0]
+                p += 2
             res = transform('delete', res, pos + offset, s2)
             offset -= s2
             # print('delete', pos, s2)

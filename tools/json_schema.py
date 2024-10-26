@@ -57,31 +57,36 @@ def update_json_tree(json_data: dict, tree=None):
     return tree
 
 
-def update_tree_with_file(file_path: str, tree: dict = None):
+def update_tree_with_file(file_path: str, tree: dict = None, is_jsonl=True):
     """
     读取json文件，更新json结构树
     :param file_path: json文件路径
     :param tree: 已有json结构树
+    :param is_jsonl: 是否为jsonl
     :return: json结构树
     """
     if tree is None:
         tree = {}
-    with open(file_path, "r") as jsonl_file:
-        for line in tqdm(jsonl_file, desc='Processing json lines'):
-            json_object = json.loads(line)
-            tree = update_json_tree(json_object, tree)
+    with open(file_path, "r") as json_file:
+        if is_jsonl:
+            for line in tqdm(json_file, desc='Processing json lines'):
+                json_object = json.loads(line)
+                tree = update_json_tree(json_object, tree)
+        else:
+            json_objects = json.load(json_file)
+            for i in json_objects:
+                tree = update_json_tree(i, tree)
     return tree
 
 
 if __name__ == '__main__':
     # JSON 数据
-    # jsonl_file_paths = [os.path.join('ta1-trace-3-e5-official-1', i) for i in os.listdir('ta1-trace-3-e5-official-1')]
-    jsonl_file_paths = ['test.jsonl']
+    jsonl_file_paths = ['../data/raw/audit.json']
     # JSON 结构树
     json_tree = None
     # 更新树结构
     for i in jsonl_file_paths:
-        json_tree = update_tree_with_file(i, json_tree)
+        json_tree = update_tree_with_file(i, json_tree, False)
     # 打印更新后的树结构
     s = json.dumps(json_tree, indent=2)
     print(s)

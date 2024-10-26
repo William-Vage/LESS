@@ -1,6 +1,7 @@
 from pipeline.preprocess.preprocess_leonard import preprocess_toy
 from pipeline.preprocess.preprocess_darpa_tc import preprocess_darpa_tc
 from pipeline.preprocess.preprocess_darpa_optc import preprocess_darpa_optc
+from pipeline.preprocess.preprocess_audit import preprocess_audit
 from pipeline.edge.encode import edge_encode
 from pipeline.edge.decode import edge_decode
 from pipeline.edge.train_deep import train_deep_model
@@ -87,6 +88,8 @@ def encode(dataset='darpa_optc', edge_file='', vertex_file='', out_zip_file_path
         preprocess_darpa_tc(edge_file, vertex_file)
     elif dataset == 'darpa_optc':
         preprocess_darpa_optc(edge_file)
+    elif dataset == 'audit':
+        preprocess_audit(edge_file)
     t_end = time.time()
     t_cost_preprocess = t_end - t_start
     print(f"\033[33m Preprocessing Time: {t_cost_preprocess:.1f}s \033[0m")
@@ -107,7 +110,7 @@ def encode(dataset='darpa_optc', edge_file='', vertex_file='', out_zip_file_path
     print(f'Calibration table cost: {t_end - t_start}')
     # 5. Train property prediction model
     t_start = time.time()
-    if dataset == 'toy' or dataset == 'darpa_tc':
+    if dataset == 'toy' or dataset == 'darpa_tc' or dataset == 'audit':
         property_encode(encode_vertex=True, method='word_bag', window_size=4)
     elif dataset == 'darpa_optc':
         property_encode(encode_vertex=False, method='word_bag', window_size=6)
@@ -115,7 +118,7 @@ def encode(dataset='darpa_optc', edge_file='', vertex_file='', out_zip_file_path
     print(f'Encode property cost: {t_end - t_start}')
     # 6. Pack into zip
     t_start = time.time()
-    if dataset == 'toy' or dataset == 'darpa_tc':
+    if dataset == 'toy' or dataset == 'darpa_tc' or dataset == 'audit':
         compress(topology_model_name, encode_vertex=True, out_zip_file_path=out_zip_file_path,
                  out_file_name=out_zip_file_name)
     elif dataset == 'darpa_optc':
@@ -163,7 +166,7 @@ def decode(dataset='darpa_optc', topology_model_name='xgboost',
         destination = os.path.join(config.project_root, 'data/encode/edge_property.txt')
         shutil.move(found_file_path, destination)
 
-        if dataset == 'darpa_tc' or dataset == 'toy':
+        if dataset == 'darpa_tc' or dataset == 'toy' or dataset == 'audit':
             found_file_path = os.path.join(unzip_dir, 'vertex_property.txt')
             destination = os.path.join(config.project_root, 'data/encode/vertex_property.txt')
             shutil.move(found_file_path, destination)
