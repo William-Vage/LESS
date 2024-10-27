@@ -6,6 +6,7 @@ import pandas as pd
 import time
 from leonard.preprocess.base import BaseEncoder
 import leonard.config as config
+from leonard.preprocess.preprocess_audit import preprocess_audit
 
 
 def create_unique_mapping_dict(df: pd.DataFrame, exclude_col=None):
@@ -336,7 +337,11 @@ def leonard_preprocess_func(leonard_edge_file='', leonard_vertex_file='', datase
         encoder.read_vertex(vertex, vertex_id='id', vertex_type='type')
         encoder.read_edge(edge, source_id='predicate_id', destination_id='subject_id', edge_id='id',
                           edge_type='type')
-
+    elif dataset == 'audit':
+        vertex, edge = preprocess_audit(leonard_edge_file)
+        encoder.read_vertex(vertex, vertex_id='id', vertex_type='type')
+        encoder.read_edge(edge, source_id='subject_id', destination_id='predicate_id', edge_id='id',
+                          edge_type='type')
     # 编码
     encoder.encode(dataset)
     # 保存模型

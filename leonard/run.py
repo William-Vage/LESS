@@ -53,6 +53,9 @@ def leonard_run(dataset='toy'):
     elif dataset == 'toy':
         edges_list = ['edge200m.csv']
         vertices_list = ['vertex200m.csv']
+    elif dataset == 'audit':
+        edges_list = ['audit.log.10_20241023012612.json']
+        vertices_list = ['']
 
     edge_file = os.path.join(config.project_root, 'data/raw/' + edges_list[0])
     vertex_file = os.path.join(config.project_root, 'data/raw/' + vertices_list[0])

@@ -477,6 +477,8 @@ def leonard_query_run(dataset='toy'):
         out_zip_file = os.path.join(config.project_root, 'data/compress/leonard_toy_output.zip')
     elif dataset == 'darpa_tc':
         out_zip_file = os.path.join(config.project_root, 'data/compress/leonard_darpa_tc_output.zip')
+    elif dataset == 'audit':
+        return 0
     # 指定解压缩目标路径
     extract_path = os.path.join(config.project_root, 'data/compress/')
     # 打开 zip 文件

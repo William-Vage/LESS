@@ -135,7 +135,7 @@ def compute_wordbag_distance(node_attributes, window_size):
     :return: None
     """
     n = len(node_attributes)
-    enc = np.zeros((n, 95), dtype=np.short)
+    enc = np.zeros((n, 256), dtype=np.short)
     t1 = time.time()
     # 遍历node_attributes，同时统计字符计数并更新enc数组
     words = Counter()
