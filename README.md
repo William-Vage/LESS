@@ -1,5 +1,4 @@
 # Table of Contents
-*Our paper is currently under major revision. The current version already includes the implementation of all methods and experiments in the review. We will update the code as soon as the revision is completed.*
 
 
 1. Work Content
